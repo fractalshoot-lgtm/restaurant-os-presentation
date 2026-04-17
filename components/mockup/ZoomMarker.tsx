@@ -1,33 +1,50 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 
 const FRAME_W = 430;
-const EXTERNAL_OFFSET = 24; // how far past the frame edge the line extends
-const LABEL_GAP = 10; // gap between line end and label card
+const EXTERNAL_OFFSET = 24;
+const LABEL_GAP = 10;
 
 type Props = {
-  /** Position of the target button inside the frame (0-430 x, 0-932 y) */
   x: number;
   y: number;
-  /** Label shown at the end of the line, outside the frame */
   label: string;
-  /** Override auto-detected exit side. By default exits through the nearest edge. */
   side?: "left" | "right";
-  /** Delay in seconds */
+  /** Additional delay on top of the parent's orchestrated stagger */
   delay?: number;
 };
 
-/**
- * Pulsing circle sits on the target button inside the iPhone.
- * Dashed line exits through the NEAREST frame edge (shortest path inside the phone)
- * and the label lives entirely in the margin outside.
- * Auto-detects exit side based on x; pass `side` to override.
- */
+// Variants are driven by the parent ModuleSlide's choreography. When the parent
+// transitions to "visible", each marker staggers in line-by-line.
+const markerVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.6 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
+  },
+};
+
+const lineVariants: Variants = {
+  hidden: { pathLength: 0 },
+  visible: {
+    pathLength: 1,
+    transition: { duration: 0.55, ease: "easeOut", delay: 0.15 },
+  },
+};
+
+const labelVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { duration: 0.35, delay: 0.35, ease: "easeOut" },
+  },
+};
+
 export function ZoomMarker({ x, y, label, side, delay = 0 }: Props) {
   const isRight = (side ?? (x >= FRAME_W / 2 ? "right" : "left")) === "right";
 
-  // Line: from circle edge to EXTERNAL_OFFSET past the nearest frame edge
   const lineLength = isRight
     ? FRAME_W - x - 8 + EXTERNAL_OFFSET
     : x - 8 + EXTERNAL_OFFSET;
@@ -38,12 +55,19 @@ export function ZoomMarker({ x, y, label, side, delay = 0 }: Props) {
 
   return (
     <motion.div
-      className="absolute pointer-events-none hidden md:block"
-      style={{ left: x, top: y, zIndex: 30 }}
-      initial={{ opacity: 0, scale: 0.6 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true, amount: 0.4 }}
-      transition={{ duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] }}
+      className="absolute hidden md:block"
+      style={{ left: x, top: y, zIndex: 30, pointerEvents: "none" }}
+      variants={{
+        hidden: markerVariants.hidden,
+        visible: {
+          ...(markerVariants.visible as object),
+          transition: {
+            duration: 0.55,
+            ease: [0.16, 1, 0.3, 1],
+            delay,
+          },
+        },
+      }}
     >
       {/* Pulsing circle on target */}
       <div className="relative">
@@ -57,7 +81,7 @@ export function ZoomMarker({ x, y, label, side, delay = 0 }: Props) {
             border: "2px solid #22C55E",
           }}
           animate={{ scale: [1, 1.6, 1], opacity: [0.7, 0, 0.7] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         />
         <div
           className="absolute rounded-full"
@@ -91,14 +115,11 @@ export function ZoomMarker({ x, y, label, side, delay = 0 }: Props) {
           stroke="#22C55E"
           strokeWidth={1.5}
           strokeDasharray="4 3"
-          initial={{ pathLength: 0 }}
-          whileInView={{ pathLength: 1 }}
-          viewport={{ once: true, amount: 0.4 }}
-          transition={{ duration: 0.6, delay: delay + 0.2, ease: "easeOut" }}
+          variants={lineVariants}
         />
       </svg>
 
-      {/* Label card — sits entirely outside the iPhone frame */}
+      {/* Label card — outside the frame */}
       <motion.div
         className="absolute whitespace-nowrap rounded-lg"
         style={{
@@ -113,10 +134,7 @@ export function ZoomMarker({ x, y, label, side, delay = 0 }: Props) {
           letterSpacing: 0.2,
           boxShadow: "0 8px 24px rgba(15,23,42,0.18)",
         }}
-        initial={{ opacity: 0, x: isRight ? -8 : 8 }}
-        whileInView={{ opacity: 1, x: 0 }}
-        viewport={{ once: true, amount: 0.4 }}
-        transition={{ duration: 0.4, delay: delay + 0.5, ease: "easeOut" }}
+        variants={labelVariants}
       >
         {label}
       </motion.div>

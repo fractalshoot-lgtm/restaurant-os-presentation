@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { ReactNode } from "react";
 import { IphoneFrame } from "@/components/mockup/IphoneFrame";
 import { ZoomMarker } from "@/components/mockup/ZoomMarker";
@@ -23,6 +23,52 @@ type Props = {
   flip?: boolean;
 };
 
+// Choreographed reveal (single timeline triggered on scroll into view):
+//   0.0 – 0.6s  Text fades in, large & slightly offset toward page center
+//   0.6 – 1.4s  (Text holds big, alone)
+//   1.4 – 2.2s  Text shrinks + settles into its column. Phone fades in on the opposite side
+//   2.2 – 3.3s  Zoom markers cascade in, one by one, on the phone
+// A tidy 3-act beat. User feels: read the headline → UI reveal → detail callouts.
+const sectionVariants: Variants = { hidden: {}, visible: {} };
+
+const textVariants: Variants = {
+  hidden: { opacity: 0, scale: 1.14, y: 28 },
+  visible: {
+    opacity: [0, 1, 1, 1, 1],
+    y: [28, 0, 0, 0, 0],
+    scale: [1.14, 1.14, 1.14, 1, 1],
+    transition: {
+      duration: 2.6,
+      times: [0, 0.2, 0.5, 0.82, 1],
+      ease: [0.16, 1, 0.3, 1],
+    },
+  },
+};
+
+const phoneVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.88, y: 40 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: 0.95,
+      delay: 1.4,
+      ease: [0.16, 1, 0.3, 1],
+    },
+  },
+};
+
+const markersContainerVariants: Variants = {
+  hidden: {},
+  visible: {
+    transition: {
+      delayChildren: 2.3,
+      staggerChildren: 0.18,
+    },
+  },
+};
+
 export function ModuleSlide({
   index,
   eyebrow,
@@ -32,22 +78,43 @@ export function ModuleSlide({
   zooms,
   flip,
 }: Props) {
+  // Subtle horizontal offset in phase 1 so the text feels more "centered on the page",
+  // not confined to its column. Reverses for flipped slides.
+  const phase1Offset = flip ? "-8%" : "8%";
+
+  const textAnimate: Variants["visible"] = {
+    opacity: [0, 1, 1, 1, 1],
+    y: [28, 0, 0, 0, 0],
+    x: [phase1Offset, phase1Offset, phase1Offset, "0%", "0%"],
+    scale: [1.14, 1.14, 1.14, 1, 1],
+    transition: {
+      duration: 2.6,
+      times: [0, 0.2, 0.5, 0.82, 1],
+      ease: [0.16, 1, 0.3, 1],
+    },
+  };
+
   return (
-    <section className="py-16 md:py-32 px-5 md:px-10">
-      <div
+    <section className="py-14 md:py-24 px-5 md:px-10 overflow-x-hidden">
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, amount: 0.25 }}
+        variants={sectionVariants}
         className={`max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-20 items-center ${
           flip ? "lg:[&>div:first-child]:order-2" : ""
         }`}
       >
-        {/* Text */}
-        <div>
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.5 }}
-            transition={{ duration: 0.5 }}
-            className="flex items-center gap-3 mb-5"
-          >
+        {/* Text block — phase 1 */}
+        <motion.div
+          variants={{
+            hidden: textVariants.hidden,
+            visible: textAnimate,
+          }}
+          className="relative z-10"
+          style={{ transformOrigin: flip ? "right center" : "left center" }}
+        >
+          <div className="flex items-center gap-3 mb-5">
             <div
               className="flex items-center justify-center rounded-full text-sm font-bold"
               style={{
@@ -65,13 +132,9 @@ export function ModuleSlide({
             >
               {eyebrow}
             </div>
-          </motion.div>
+          </div>
 
-          <motion.h3
-            initial={{ opacity: 0, y: 18 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          <h3
             className="font-bold tracking-tight"
             style={{
               color: "#0F172A",
@@ -81,27 +144,11 @@ export function ModuleSlide({
             }}
           >
             {headline}
-          </motion.h3>
+          </h3>
 
-          <motion.ul
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.3 }}
-            variants={{
-              hidden: {},
-              visible: { transition: { staggerChildren: 0.12, delayChildren: 0.25 } },
-            }}
-            className="mt-6 md:mt-8 space-y-3.5 md:space-y-4"
-          >
+          <ul className="mt-6 md:mt-8 space-y-3.5 md:space-y-4">
             {bullets.map((b) => (
-              <motion.li
-                key={b}
-                variants={{
-                  hidden: { opacity: 0, y: 8 },
-                  visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-                }}
-                className="flex gap-3"
-              >
+              <li key={b} className="flex gap-3">
                 <span
                   className="flex-shrink-0 mt-[7px]"
                   style={{
@@ -117,32 +164,33 @@ export function ModuleSlide({
                 >
                   {b}
                 </span>
-              </motion.li>
+              </li>
             ))}
-          </motion.ul>
-        </div>
+          </ul>
+        </motion.div>
 
-        {/* iPhone + zoom markers — responsive via container queries */}
+        {/* Phone block — phase 2 + 3 */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          variants={phoneVariants}
           className="relative w-full max-w-[260px] sm:max-w-[280px] md:max-w-[300px] lg:max-w-[320px] mx-auto"
         >
           <IphoneFrame
             overlay={
-              <>
+              <motion.div
+                variants={markersContainerVariants}
+                className="absolute inset-0"
+                style={{ pointerEvents: "none" }}
+              >
                 {zooms.map((z, i) => (
-                  <ZoomMarker key={i} {...z} delay={z.delay ?? 0.4 + i * 0.25} />
+                  <ZoomMarker key={i} {...z} delay={i * 0.1} />
                 ))}
-              </>
+              </motion.div>
             }
           >
             {screen}
           </IphoneFrame>
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   );
 }
