@@ -2,26 +2,39 @@
 
 import { motion } from "framer-motion";
 
+const FRAME_W = 430;
+const EXTERNAL_OFFSET = 24; // how far past the frame edge the line extends
+const LABEL_GAP = 10; // gap between line end and label card
+
 type Props = {
-  /** Position inside the iPhone frame (0-430 x, 0-932 y) */
+  /** Position of the target button inside the frame (0-430 x, 0-932 y) */
   x: number;
   y: number;
-  /** Label that appears in the callout card */
+  /** Label shown at the end of the line, outside the frame */
   label: string;
-  /** Direction the callout card extends from the circle */
+  /** Override auto-detected exit side. By default exits through the nearest edge. */
   side?: "left" | "right";
   /** Delay in seconds */
   delay?: number;
 };
 
 /**
- * Pulsing circle + dashed connector + label card.
- * Positioned absolutely inside the iPhone frame wrapper.
+ * Pulsing circle sits on the target button inside the iPhone.
+ * Dashed line exits through the NEAREST frame edge (shortest path inside the phone)
+ * and the label lives entirely in the margin outside.
+ * Auto-detects exit side based on x; pass `side` to override.
  */
-export function ZoomMarker({ x, y, label, side = "right", delay = 0 }: Props) {
-  const isRight = side === "right";
-  const lineLength = 90;
-  const cardOffset = lineLength + 18;
+export function ZoomMarker({ x, y, label, side, delay = 0 }: Props) {
+  const isRight = (side ?? (x >= FRAME_W / 2 ? "right" : "left")) === "right";
+
+  // Line: from circle edge to EXTERNAL_OFFSET past the nearest frame edge
+  const lineLength = isRight
+    ? FRAME_W - x - 8 + EXTERNAL_OFFSET
+    : x - 8 + EXTERNAL_OFFSET;
+
+  const lineLeft = isRight ? 8 : -lineLength - 8;
+  const labelLeft = isRight ? lineLength + 8 + LABEL_GAP : undefined;
+  const labelRight = isRight ? undefined : lineLength + 8 + LABEL_GAP;
 
   return (
     <motion.div
@@ -32,7 +45,7 @@ export function ZoomMarker({ x, y, label, side = "right", delay = 0 }: Props) {
       viewport={{ once: true, amount: 0.4 }}
       transition={{ duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] }}
     >
-      {/* Pulsing circle */}
+      {/* Pulsing circle on target */}
       <div className="relative">
         <motion.div
           className="absolute rounded-full"
@@ -43,27 +56,27 @@ export function ZoomMarker({ x, y, label, side = "right", delay = 0 }: Props) {
             top: -14,
             border: "2px solid #22C55E",
           }}
-          animate={{ scale: [1, 1.6, 1], opacity: [0.6, 0, 0.6] }}
+          animate={{ scale: [1, 1.6, 1], opacity: [0.7, 0, 0.7] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut", delay }}
         />
         <div
           className="absolute rounded-full"
           style={{
-            width: 16,
-            height: 16,
-            left: -8,
-            top: -8,
+            width: 14,
+            height: 14,
+            left: -7,
+            top: -7,
             background: "#22C55E",
-            boxShadow: "0 0 0 4px rgba(34,197,94,0.2)",
+            boxShadow: "0 0 0 3px rgba(34,197,94,0.25)",
           }}
         />
       </div>
 
-      {/* Dashed connector */}
+      {/* Dashed line exiting the frame */}
       <svg
         className="absolute"
         style={{
-          left: isRight ? 8 : -lineLength - 8,
+          left: lineLeft,
           top: -1,
           width: lineLength,
           height: 2,
@@ -85,12 +98,12 @@ export function ZoomMarker({ x, y, label, side = "right", delay = 0 }: Props) {
         />
       </svg>
 
-      {/* Label card */}
+      {/* Label card — sits entirely outside the iPhone frame */}
       <motion.div
         className="absolute whitespace-nowrap rounded-lg"
         style={{
-          left: isRight ? cardOffset : undefined,
-          right: isRight ? undefined : cardOffset,
+          left: labelLeft,
+          right: labelRight,
           top: -18,
           background: "#0F172A",
           color: "#FFFFFF",

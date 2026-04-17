@@ -128,7 +128,7 @@ export function ModuleSlide({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="relative w-full max-w-[260px] sm:max-w-[300px] md:max-w-[320px] lg:max-w-[360px] mx-auto"
+          className="relative w-full max-w-[260px] sm:max-w-[280px] md:max-w-[300px] lg:max-w-[320px] mx-auto"
         >
           <IphoneFrame
             overlay={
