@@ -8,8 +8,14 @@ import { NumberedDot } from "@/components/mockup/NumberedDot";
 import { MockupModal } from "@/components/mockup/MockupModal";
 
 export type Zoom = {
+  /** Top-left of the target in 430x932 design space */
   x: number;
   y: number;
+  /** Target size (design px) — marker adopts this shape */
+  w: number;
+  h: number;
+  /** Border radius matching the target (default 14) */
+  radius?: number;
   label: string;
   side?: "left" | "right";
   delay?: number;
@@ -51,11 +57,18 @@ function ModuleSlideMobile({
   zooms,
 }: Props) {
   const [open, setOpen] = useState(false);
-  const [highlight, setHighlight] = useState<{ x: number; y: number; label: string } | null>(null);
+  const [highlight, setHighlight] = useState<{
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    radius?: number;
+    label: string;
+  } | null>(null);
   const phoneWidth = 170;
 
   const openWithHighlight = (z: Zoom) => {
-    setHighlight({ x: z.x, y: z.y, label: z.label });
+    setHighlight({ x: z.x, y: z.y, w: z.w, h: z.h, radius: z.radius, label: z.label });
     setOpen(true);
   };
 
@@ -159,6 +172,8 @@ function ModuleSlideMobile({
               key={i}
               x={z.x}
               y={z.y}
+              w={z.w}
+              h={z.h}
               phoneWidth={phoneWidth}
               number={i + 1}
               label={z.label}

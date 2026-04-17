@@ -16,54 +16,71 @@ type SlideCfg = {
   zooms: Zoom[];
 };
 
-// Coords in the 430x932 design space, calibrated against the rebuilt mockups
-// (topPad=52 content start y=66; see real RestaurantOS pages for inspiration).
+// Coords in the 430x932 design space. Each zoom traces the target card/button:
+// { x, y } = top-left, { w, h } = size, radius = border radius.
 const SLIDES: Record<string, SlideCfg> = {
   dashboard: {
     screen: <DashboardScreen />,
     zooms: [
-      { x: 215, y: 267, label: "Production Review card" },
-      { x: 300, y: 354, label: "Live progress ring" },
-      { x: 90, y: 531, label: "By area breakdown" },
+      // Dark navy Production Review card
+      { x: 14, y: 226, w: 402, h: 130, radius: 20, label: "Production Review card" },
+      // Progress ring stat (top-right of 2x2 grid)
+      { x: 220, y: 372, w: 196, h: 112, radius: 18, label: "Live progress ring" },
+      // By area card (bottom card)
+      { x: 14, y: 600, w: 402, h: 176, radius: 20, label: "By area breakdown" },
     ],
   },
   tareas: {
     screen: <TareasScreen />,
     zooms: [
-      { x: 365, y: 108, label: "Daily compliance %" },
-      { x: 370, y: 420, label: "Two-tap action" },
-      { x: 150, y: 630, label: "Block + reschedule" },
+      // Compliance badge top-right of header
+      { x: 348, y: 66, w: 60, h: 52, radius: 12, label: "Daily compliance %" },
+      // Action button on pending task (right-side 48x48 square button, 3rd row)
+      { x: 362, y: 326, w: 48, h: 48, radius: 12, label: "Two-tap action" },
+      // Blocked task card (5th row, taller due to reason + reschedule line)
+      { x: 14, y: 510, w: 402, h: 110, radius: 14, label: "Block + reschedule" },
     ],
   },
   semana: {
     screen: <SemanaScreen />,
     zooms: [
-      { x: 180, y: 168, label: "Search 198 tasks" },
-      { x: 80, y: 355, label: "Today card expanded" },
-      { x: 215, y: 235, label: "Week at a glance" },
+      // Search card
+      { x: 14, y: 132, w: 402, h: 68, radius: 14, label: "Search 198 tasks" },
+      // Today (Thursday) expanded card
+      { x: 14, y: 416, w: 402, h: 198, radius: 14, label: "Today card expanded" },
+      // Full Week header block
+      { x: 14, y: 58, w: 402, h: 60, radius: 0, label: "Week at a glance" },
     ],
   },
   produccion: {
     screen: <ProduccionScreen />,
     zooms: [
-      { x: 340, y: 170, label: "Yes / No toggle" },
-      { x: 70, y: 139, label: "Area grouping" },
-      { x: 215, y: 875, label: "One-tap submit" },
+      // Yes/No toggles on first task card
+      { x: 306, y: 158, w: 104, h: 30, radius: 8, label: "Yes / No toggle" },
+      // Cold Prep area heading
+      { x: 14, y: 114, w: 160, h: 28, radius: 8, label: "Area grouping" },
+      // Submit button footer
+      { x: 14, y: 860, w: 402, h: 48, radius: 14, label: "One-tap submit" },
     ],
   },
   filtro: {
     screen: <FiltroScreen />,
     zooms: [
-      { x: 365, y: 98, label: "Completed count" },
-      { x: 365, y: 200, label: "One-tap revert" },
-      { x: 180, y: 195, label: "Staff + time log" },
+      // "18" count badge top-right
+      { x: 354, y: 68, w: 48, h: 28, radius: 20, label: "Completed count" },
+      // Revert pill on first card
+      { x: 320, y: 152, w: 84, h: 32, radius: 20, label: "One-tap revert" },
+      // Task card body (first card, left side with name + area + staff)
+      { x: 14, y: 132, w: 300, h: 80, radius: 14, label: "Staff + time log" },
     ],
   },
   workflows: {
     screen: <WorkflowsScreen />,
     zooms: [
-      { x: 215, y: 190, label: "Illustrated flows" },
-      { x: 215, y: 560, label: "Bot command reference" },
+      // First expanded accordion section (Daily task generator)
+      { x: 14, y: 216, w: 402, h: 132, radius: 14, label: "Illustrated flows" },
+      // Bot commands dark block at bottom
+      { x: 14, y: 576, w: 402, h: 180, radius: 14, label: "Bot command reference" },
     ],
   },
 };

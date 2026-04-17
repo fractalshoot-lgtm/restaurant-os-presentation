@@ -10,6 +10,9 @@ const FRAME_ASPECT = 932 / DESIGN_W;
 type Highlight = {
   x: number;
   y: number;
+  w: number;
+  h: number;
+  radius?: number;
   label: string;
 };
 
@@ -125,23 +128,24 @@ export function MockupModal({
 
             {highlight && (
               <>
-                {/* Glowing halo on the target */}
+                {/* Rounded-rect halo matching the target's shape */}
                 <motion.div
-                  className="absolute rounded-full pointer-events-none"
+                  className="absolute pointer-events-none"
                   style={{
-                    left: highlight.x * scale - 36,
-                    top: highlight.y * scale - 36,
-                    width: 72,
-                    height: 72,
+                    left: highlight.x * scale,
+                    top: highlight.y * scale,
+                    width: highlight.w * scale,
+                    height: highlight.h * scale,
+                    borderRadius: (highlight.radius ?? 14) * scale,
                     border: "3px solid #22C55E",
                     boxShadow:
-                      "0 0 24px rgba(34,197,94,0.7), 0 0 70px rgba(34,197,94,0.3), inset 0 0 20px rgba(34,197,94,0.25)",
+                      "0 0 0 6px rgba(34,197,94,0.18), 0 0 32px rgba(34,197,94,0.55), 0 0 80px rgba(34,197,94,0.25)",
                     zIndex: 60,
                   }}
-                  initial={{ opacity: 0, scale: 0.6 }}
+                  initial={{ opacity: 0, scale: 0.92 }}
                   animate={{
-                    opacity: [0, 1, 0.9, 1, 0.9, 1],
-                    scale: [0.6, 1.1, 1, 1.05, 1, 1],
+                    opacity: [0, 1, 0.85, 1, 0.85, 1],
+                    scale: [0.92, 1.02, 1, 1.015, 1, 1],
                   }}
                   transition={{
                     duration: 1.8,

@@ -5,10 +5,15 @@ import { motion } from "framer-motion";
 const DESIGN_W = 430;
 
 type Props = {
-  /** Position inside the 430x932 design space */
+  /** Top-left of the target in 430x932 design space */
   x: number;
   y: number;
-  /** Actual rendered width of the phone (px) — drives marker position + line length */
+  /** Size of the target (design space px) — marker adopts this shape */
+  w: number;
+  h: number;
+  /** Border radius to match the target's shape */
+  radius?: number;
+  /** Actual rendered width of the phone (px) — drives scale + line length */
   phoneWidth: number;
   label: string;
   side?: "left" | "right";
@@ -16,36 +21,57 @@ type Props = {
 };
 
 /**
- * Markers render OUTSIDE the iPhone's scale transform (in real pixel coords),
- * so circles, lines and labels stay at a fixed, readable size regardless of
- * phone size.
- * Place as a sibling to IphoneFrame inside a relative wrapper of width = phoneWidth.
+ * Marker draws a rounded rectangle that matches the target card/button's shape.
+ * Rendered OUTSIDE the iPhone's scale transform so stroke width and label stay
+ * legible at any phone size. Connector line exits from the nearest vertical edge.
  */
-export function ZoomMarker({ x, y, phoneWidth, label, side, delay = 0 }: Props) {
+export function ZoomMarker({
+  x,
+  y,
+  w,
+  h,
+  radius = 14,
+  phoneWidth,
+  label,
+  side,
+  delay = 0,
+}: Props) {
   const scale = phoneWidth / DESIGN_W;
   const actualX = x * scale;
   const actualY = y * scale;
-  const isRight = (side ?? (x >= DESIGN_W / 2 ? "right" : "left")) === "right";
+  const actualW = w * scale;
+  const actualH = h * scale;
+  const actualR = radius * scale;
+  const centerX = x + w / 2;
+  const isRight = (side ?? (centerX >= DESIGN_W / 2 ? "right" : "left")) === "right";
 
   const EXTERNAL_OFFSET = 18;
   const LABEL_GAP = 8;
 
-  // Line goes from the circle to just past the phone's real edge
+  // Line exits from the rect's right or left edge (mid-height)
+  const lineStartX = isRight ? actualW : 0;
   const lineLength = isRight
-    ? phoneWidth - actualX - 6 + EXTERNAL_OFFSET
-    : actualX - 6 + EXTERNAL_OFFSET;
+    ? phoneWidth - actualX - actualW + EXTERNAL_OFFSET
+    : actualX + EXTERNAL_OFFSET;
 
-  const lineLeft = isRight ? 6 : -lineLength - 6;
-  const labelLeft = isRight ? lineLength + 6 + LABEL_GAP : undefined;
-  const labelRight = isRight ? undefined : lineLength + 6 + LABEL_GAP;
+  const lineLeft = isRight ? lineStartX : -lineLength;
+  const labelLeft = isRight ? lineStartX + lineLength + LABEL_GAP : undefined;
+  const labelRight = isRight ? undefined : lineLength + LABEL_GAP;
 
   const baseDelay = 2.3 + delay;
 
   return (
     <motion.div
       className="absolute"
-      style={{ left: actualX, top: actualY, zIndex: 30, pointerEvents: "none" }}
-      initial={{ opacity: 0, scale: 0.6 }}
+      style={{
+        left: actualX,
+        top: actualY,
+        width: actualW,
+        height: actualH,
+        zIndex: 30,
+        pointerEvents: "none",
+      }}
+      initial={{ opacity: 0, scale: 0.96 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true, amount: 0.15 }}
       transition={{
@@ -54,39 +80,30 @@ export function ZoomMarker({ x, y, phoneWidth, label, side, delay = 0 }: Props) 
         ease: [0.16, 1, 0.3, 1],
       }}
     >
-      {/* Pulsing target */}
-      <div className="relative">
-        <motion.div
-          className="absolute rounded-full"
-          style={{
-            width: 22,
-            height: 22,
-            left: -11,
-            top: -11,
-            border: "2px solid #22C55E",
-          }}
-          animate={{ scale: [1, 1.6, 1], opacity: [0.7, 0, 0.7] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <div
-          className="absolute rounded-full"
-          style={{
-            width: 10,
-            height: 10,
-            left: -5,
-            top: -5,
-            background: "#22C55E",
-            boxShadow: "0 0 0 3px rgba(34,197,94,0.25)",
-          }}
-        />
-      </div>
+      {/* Rect that traces the target's shape */}
+      <motion.div
+        className="absolute inset-0"
+        style={{
+          borderRadius: actualR,
+          border: "2px solid #22C55E",
+          boxShadow: "0 0 0 3px rgba(34,197,94,0.18)",
+        }}
+        animate={{
+          boxShadow: [
+            "0 0 0 3px rgba(34,197,94,0.18), 0 0 0 rgba(34,197,94,0)",
+            "0 0 0 6px rgba(34,197,94,0.05), 0 0 22px rgba(34,197,94,0.45)",
+            "0 0 0 3px rgba(34,197,94,0.18), 0 0 0 rgba(34,197,94,0)",
+          ],
+        }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+      />
 
-      {/* Dashed connector line */}
+      {/* Dashed connector line — mid-height of the rect */}
       <svg
         className="absolute"
         style={{
           left: lineLeft,
-          top: -1,
+          top: actualH / 2 - 1,
           width: lineLength,
           height: 2,
           overflow: "visible",
@@ -113,7 +130,7 @@ export function ZoomMarker({ x, y, phoneWidth, label, side, delay = 0 }: Props) 
         style={{
           left: labelLeft,
           right: labelRight,
-          top: -14,
+          top: actualH / 2 - 14,
           background: "#0F172A",
           color: "#FFFFFF",
           padding: "5px 9px",

@@ -5,8 +5,12 @@ import { motion } from "framer-motion";
 const DESIGN_W = 430;
 
 type Props = {
+  /** Top-left of target in design space — used to position the badge vertically */
   x: number;
   y: number;
+  /** Target size in design space — badge aligns to the vertical center of the target */
+  w: number;
+  h: number;
   phoneWidth: number;
   number: number;
   side?: "left" | "right";
@@ -23,6 +27,8 @@ type Props = {
 export function NumberedDot({
   x,
   y,
+  w,
+  h,
   phoneWidth,
   number,
   side,
@@ -31,8 +37,9 @@ export function NumberedDot({
   label,
 }: Props) {
   const scale = phoneWidth / DESIGN_W;
-  const actualY = y * scale;
-  const isRight = (side ?? (x >= DESIGN_W / 2 ? "right" : "left")) === "right";
+  const actualY = (y + h / 2) * scale;
+  const centerX = x + w / 2;
+  const isRight = (side ?? (centerX >= DESIGN_W / 2 ? "right" : "left")) === "right";
 
   const BADGE_W = 26;
   const OFFSET = 12;

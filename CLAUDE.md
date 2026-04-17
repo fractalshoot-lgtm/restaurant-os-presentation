@@ -100,10 +100,11 @@ Barra navy #0F172A con botón verde circular elevado 56×56 en el centro (border
 
 ## Estado actual
 
-- **Último commit**: `9e640bd` fix(bottom-nav): pin to the bottom + render on Semana and Filtro
-- Mockups rehechos para coincidir con la app real (sesión de hoy)
+- **Último commit con cambios visibles**: `3288c9e` docs: add CLAUDE.md with session handoff
+- **En curso (sin push — pendiente de revisión visual la próxima sesión)**: shape-based markers
+- Mockups coinciden con la app real
 - BottomNav anclada correctamente al fondo, visible en 5 de 6 slides (Produccion tiene su propio Submit footer)
-- Zoom markers recalibrados contra los nuevos layouts
+- Zoom markers rediseñados: ahora adoptan la forma del target (no puntos)
 
 ### En qué módulo estamos
 
@@ -115,16 +116,41 @@ Los slides ya tienen:
 - Markers numerados que abren modal con highlight
 - BottomNav anclada abajo
 
+## Sesión 2 — shape-based markers (sin push aún)
+
+### Qué cambió hoy
+
+Petición del usuario: **"en los zoom marks en lugar de que sea un circulo me gustaría que se adoptara la forma de la tarjeta o botón en la app a la que se hace referencia"**.
+
+Refactor de los markers para que en vez de un punto circular sobre el target, dibujen un **rectángulo redondeado calcando la forma de la tarjeta/botón real**.
+
+### Archivos modificados (sin commit al momento de guardar)
+
+- `components/mockup/ZoomMarker.tsx` — desktop marker pasa de círculo a rect. Pulse ahora es `box-shadow` animada (no deforma el rect). Línea dashed sale del borde lateral.
+- `components/mockup/MockupModal.tsx` — halo del modal (mobile) también pasa a rect con mismo `w/h/radius`.
+- `components/mockup/NumberedDot.tsx` — badge numerado se alinea al centro vertical del target (`y + h/2`).
+- `components/sections/ModuleSlide.tsx` — tipo `Zoom` extendido con `w, h, radius?`. Mobile pasa shape al modal.
+- `components/sections/ModuleTour.tsx` — los 16 markers recalibrados con `{ x, y, w, h, radius }` en design space 430×932.
+
+### Ejemplo de la recalibración
+
+Dashboard marker #3 (By area) pasó de `(90, 531)` punto → `(14, 600, 402×176, r=20)` tarjeta completa.
+
+### Estado del commit
+
+- Sin commit ni push aún: user quiere **revisar visualmente antes** en la próxima sesión.
+- `npx tsc --noEmit` pasa sin errores.
+- `tsconfig.tsbuildinfo` apareció untracked (artifact del type-check — ignorar o agregar a `.gitignore`).
+
 ## Qué sigue en la próxima sesión
 
 ### Prioridad alta
-1. **Verificar visualmente la coincidencia con la app real** — ver cada slide y comparar contra screenshots reales, ajustar:
-   - Tamaños/pesos de fuente exactos
-   - Padding/margin de cards
-   - Colores (verificar que los grises y tints coincidan)
-   - Posiciones de elementos
-2. **Recalibrar coords de zoom markers** contra los screens rebuilt. Algunos pueden seguir desalineados ahora que los layouts cambiaron.
-3. **Verificar en device real** — iPhone físico y Android — que todo se vea bien y los tap-to-enlarge funcionen fluido.
+1. **Revisar los shape-based markers** — arrancar `npm run dev`, abrir cada slide (desktop + mobile modal):
+   - Verificar que el rect calca bien la tarjeta/botón en los 6 slides
+   - Ajustar `x, y, w, h, radius` donde no coincida
+   - Decidir si commit + push o iterar más
+2. **Verificar visualmente la coincidencia con la app real** — comparar contra screenshots reales, ajustar fuentes, padding, colores, posiciones.
+3. **Verificar en device real** — iPhone físico y Android — que todo se vea bien.
 
 ### Prioridad media
 4. **ProduccionScreen** — quedó del diseño viejo (área COLD PREP + 5 tasks + Submit), reescribir con el patrón real: sticky header con back + lock emoji, task cards con borde izquierdo coloreado según decisión, footer con name input + Submit verde, banner "🔒 Review completed" cuando está submitted.
