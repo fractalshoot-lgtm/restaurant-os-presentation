@@ -4,6 +4,7 @@ import { motion, type Variants } from "framer-motion";
 import { ReactNode, useState } from "react";
 import { IphoneFrame } from "@/components/mockup/IphoneFrame";
 import { ZoomMarker } from "@/components/mockup/ZoomMarker";
+import { NumberedDot } from "@/components/mockup/NumberedDot";
 import { MockupModal } from "@/components/mockup/MockupModal";
 
 export type Zoom = {
@@ -141,25 +142,53 @@ function ModuleSlideMobile({
             <IphoneFrame width={phoneWidth}>{screen}</IphoneFrame>
           </button>
 
+          {/* Numbered dots on target buttons — labels are in the legend below */}
           {zooms.map((z, i) => (
-            <ZoomMarker
+            <NumberedDot
               key={i}
-              {...z}
+              x={z.x}
+              y={z.y}
               phoneWidth={phoneWidth}
-              delay={i * 0.18}
+              number={i + 1}
+              delay={i * 0.15}
             />
           ))}
+        </div>
 
-          <div
-            className="absolute left-1/2 -translate-x-1/2 text-[11px] font-semibold"
-            style={{
-              bottom: -26,
-              color: "#22C55E",
-              letterSpacing: 0.3,
-            }}
-          >
-            Tap to enlarge ↗
-          </div>
+        {/* Numbered legend — matches the dots above */}
+        <motion.ul
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.5, delay: 2.1, ease: "easeOut" }}
+          className="mt-6 space-y-2 max-w-[260px] mx-auto"
+        >
+          {zooms.map((z, i) => (
+            <li key={i} className="flex items-center gap-2.5">
+              <span
+                className="inline-flex items-center justify-center rounded-full font-bold flex-shrink-0"
+                style={{
+                  width: 20,
+                  height: 20,
+                  background: "#22C55E",
+                  color: "#FFFFFF",
+                  fontSize: 11,
+                }}
+              >
+                {i + 1}
+              </span>
+              <span className="text-[13px]" style={{ color: "#475569" }}>
+                {z.label}
+              </span>
+            </li>
+          ))}
+        </motion.ul>
+
+        <div
+          className="mt-4 text-center text-[11px] font-semibold"
+          style={{ color: "#22C55E", letterSpacing: 0.3 }}
+        >
+          Tap to enlarge ↗
         </div>
       </motion.div>
 
