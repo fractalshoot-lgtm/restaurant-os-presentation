@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #f8fafc;
+  --color-card: #ffffff;
+  --color-navy: #0f172a;
+  --color-accent: #22c55e;
+  --color-accent-600: #16a34a;
+  --color-muted: #64748b;
+  --color-sub: #94a3b8;
+  --color-border: #e2e8f0;
+  --color-critical: #ef4444;
+  --color-production: #f0883e;
+  --color-extra: #64748b;
+  --color-dark-1: #0a0a18;
+  --color-dark-2: #1a0d2e;
+
+  --font-sans: "Karla", ui-sans-serif, system-ui, sans-serif;
+
+  --radius-card: 14px;
+  --radius-card-lg: 20px;
+  --radius-pill: 999px;
+
+  --shadow-card: 0 2px 14px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 12px 48px rgba(0, 0, 0, 0.12);
+  --shadow-hero: 0 40px 80px rgba(15, 23, 42, 0.25);
+}
+
+html,
+body {
+  background-color: var(--color-bg);
+  color: var(--color-navy);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Reset default focus ring to use accent color */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* Disable pull-to-refresh, keep scroll snappy */
+html {
+  overscroll-behavior-y: none;
+  scroll-behavior: smooth;
+}
+
+/* Ensure Lenis container behaves */
+html.lenis {
+  height: auto;
+}
+html.lenis body {
+  overflow: hidden;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
