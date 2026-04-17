@@ -51,7 +51,18 @@ function ModuleSlideMobile({
   zooms,
 }: Props) {
   const [open, setOpen] = useState(false);
+  const [highlight, setHighlight] = useState<{ x: number; y: number; label: string } | null>(null);
   const phoneWidth = 170;
+
+  const openWithHighlight = (z: Zoom) => {
+    setHighlight({ x: z.x, y: z.y, label: z.label });
+    setOpen(true);
+  };
+
+  const openFull = () => {
+    setHighlight(null);
+    setOpen(true);
+  };
 
   return (
     <section className="py-10 px-5">
@@ -129,7 +140,7 @@ function ModuleSlideMobile({
         >
           <button
             type="button"
-            onClick={() => setOpen(true)}
+            onClick={openFull}
             aria-label="Enlarge mockup"
             className="cursor-zoom-in block"
             style={{
@@ -142,7 +153,7 @@ function ModuleSlideMobile({
             <IphoneFrame width={phoneWidth}>{screen}</IphoneFrame>
           </button>
 
-          {/* Numbered dots on target buttons — labels are in the legend below */}
+          {/* Numbered dots on the side — tap one to open modal with highlight */}
           {zooms.map((z, i) => (
             <NumberedDot
               key={i}
@@ -150,45 +161,18 @@ function ModuleSlideMobile({
               y={z.y}
               phoneWidth={phoneWidth}
               number={i + 1}
+              label={z.label}
               delay={i * 0.15}
+              onClick={() => openWithHighlight(z)}
             />
           ))}
         </div>
 
-        {/* Numbered legend — matches the dots above */}
-        <motion.ul
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.5, delay: 2.1, ease: "easeOut" }}
-          className="mt-6 space-y-2 max-w-[260px] mx-auto"
-        >
-          {zooms.map((z, i) => (
-            <li key={i} className="flex items-center gap-2.5">
-              <span
-                className="inline-flex items-center justify-center rounded-full font-bold flex-shrink-0"
-                style={{
-                  width: 20,
-                  height: 20,
-                  background: "#22C55E",
-                  color: "#FFFFFF",
-                  fontSize: 11,
-                }}
-              >
-                {i + 1}
-              </span>
-              <span className="text-[13px]" style={{ color: "#475569" }}>
-                {z.label}
-              </span>
-            </li>
-          ))}
-        </motion.ul>
-
         <div
-          className="mt-4 text-center text-[11px] font-semibold"
+          className="mt-6 text-center text-[11px] font-semibold"
           style={{ color: "#22C55E", letterSpacing: 0.3 }}
         >
-          Tap to enlarge ↗
+          Tap a number or the phone to enlarge ↗
         </div>
       </motion.div>
 
@@ -196,6 +180,7 @@ function ModuleSlideMobile({
         open={open}
         onClose={() => setOpen(false)}
         title={`0${index} · ${eyebrow}`}
+        highlight={highlight}
       >
         {screen}
       </MockupModal>
