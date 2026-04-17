@@ -1,11 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState } from "react";
 import { hero } from "@/lib/content";
 import { IphoneFrame } from "@/components/mockup/IphoneFrame";
+import { MockupModal } from "@/components/mockup/MockupModal";
 import { DashboardScreen } from "@/components/mockup/screens/DashboardScreen";
 
 export function Hero() {
+  const [open, setOpen] = useState(false);
+
   return (
     <section
       className="relative min-h-screen overflow-hidden flex items-center"
@@ -33,7 +37,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-[10px] md:text-xs font-semibold tracking-[0.2em] uppercase"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-[11px] md:text-xs font-semibold tracking-[0.15em]"
             style={{
               background: "rgba(34,197,94,0.1)",
               borderColor: "rgba(34,197,94,0.3)",
@@ -108,18 +112,36 @@ export function Hero() {
           transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
           className="relative mx-auto"
         >
-          <div className="lg:hidden">
-            <IphoneFrame width={190} tilt>
-              <DashboardScreen />
-            </IphoneFrame>
-          </div>
-          <div className="hidden lg:block">
-            <IphoneFrame width={340} tilt>
-              <DashboardScreen />
-            </IphoneFrame>
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-label="Enlarge mockup"
+            className="cursor-zoom-in block mx-auto"
+            style={{ border: "none", background: "none", padding: 0 }}
+          >
+            <div className="lg:hidden">
+              <IphoneFrame width={200} tilt>
+                <DashboardScreen />
+              </IphoneFrame>
+            </div>
+            <div className="hidden lg:block">
+              <IphoneFrame width={340} tilt>
+                <DashboardScreen />
+              </IphoneFrame>
+            </div>
+          </button>
+          <div
+            className="mt-3 text-center text-xs font-semibold"
+            style={{ color: "#22C55E", letterSpacing: 0.3 }}
+          >
+            Tap to enlarge ↗
           </div>
         </motion.div>
       </div>
+
+      <MockupModal open={open} onClose={() => setOpen(false)} title="Dashboard">
+        <DashboardScreen />
+      </MockupModal>
 
       {/* Scroll indicator */}
       <motion.div

@@ -8,23 +8,23 @@ const FRAME_H = 932;
 
 type Props = {
   children: ReactNode;
-  /** Decorative children (e.g. ZoomMarkers) positioned absolutely in the 430x932 coord system. */
-  overlay?: ReactNode;
   tilt?: boolean;
-  /** Rendered width in px. Height is derived from the 430/932 aspect. */
+  /** Rendered width in px. Height is derived from 430/932. */
   width?: number;
   className?: string;
 } & MotionProps;
 
 /**
- * iPhone 16 Pro Max (430x932). Renders at an explicit pixel width — parent
- * passes the width per breakpoint. Internally we scale the 430x932 design via
- * a single CSS transform and let the frame box inherit the final scaled size,
- * so nothing leaks into adjacent sections.
+ * iPhone 16 Pro Max (430x932 design space). Renders at an explicit pixel
+ * width; internal content is scaled via a single CSS transform. The outer
+ * box is sized to the final rendered dimensions, so nothing leaks into
+ * adjacent sections.
+ *
+ * Markers (ZoomMarker) are rendered OUTSIDE this component so that labels
+ * remain at real pixel size (readable on mobile and desktop alike).
  */
 export function IphoneFrame({
   children,
-  overlay,
   tilt = false,
   width = 320,
   className = "",
@@ -58,7 +58,6 @@ export function IphoneFrame({
           transformStyle: "preserve-3d",
         }}
       >
-        {/* Outer bezel */}
         <div
           className="absolute inset-0 rounded-[64px]"
           style={{
@@ -69,20 +68,17 @@ export function IphoneFrame({
             padding: 12,
           }}
         >
-          {/* Inner titanium ring */}
           <div
             className="absolute inset-[10px] rounded-[54px]"
             style={{
               background: "linear-gradient(135deg, #3a3a42, #17171c)",
             }}
           />
-          {/* Screen */}
           <div
             className="absolute inset-[14px] rounded-[50px] overflow-hidden"
             style={{ background: "#F8FAFC" }}
           >
             {children}
-            {/* Dynamic island */}
             <div
               className="absolute left-1/2 -translate-x-1/2 rounded-full"
               style={{
@@ -94,55 +90,23 @@ export function IphoneFrame({
               }}
             />
           </div>
-          {/* Side buttons */}
           <div
             className="absolute"
-            style={{
-              left: -3,
-              top: 180,
-              width: 4,
-              height: 34,
-              background: "#1f1f26",
-              borderRadius: "2px 0 0 2px",
-            }}
+            style={{ left: -3, top: 180, width: 4, height: 34, background: "#1f1f26", borderRadius: "2px 0 0 2px" }}
           />
           <div
             className="absolute"
-            style={{
-              left: -3,
-              top: 240,
-              width: 4,
-              height: 60,
-              background: "#1f1f26",
-              borderRadius: "2px 0 0 2px",
-            }}
+            style={{ left: -3, top: 240, width: 4, height: 60, background: "#1f1f26", borderRadius: "2px 0 0 2px" }}
           />
           <div
             className="absolute"
-            style={{
-              left: -3,
-              top: 310,
-              width: 4,
-              height: 60,
-              background: "#1f1f26",
-              borderRadius: "2px 0 0 2px",
-            }}
+            style={{ left: -3, top: 310, width: 4, height: 60, background: "#1f1f26", borderRadius: "2px 0 0 2px" }}
           />
           <div
             className="absolute"
-            style={{
-              right: -3,
-              top: 220,
-              width: 4,
-              height: 90,
-              background: "#1f1f26",
-              borderRadius: "0 2px 2px 0",
-            }}
+            style={{ right: -3, top: 220, width: 4, height: 90, background: "#1f1f26", borderRadius: "0 2px 2px 0" }}
           />
         </div>
-
-        {/* Overlay shares the scaled coord system (zoom markers) */}
-        {overlay}
       </div>
     </motion.div>
   );

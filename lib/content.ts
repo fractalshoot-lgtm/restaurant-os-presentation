@@ -1,5 +1,5 @@
 export const hero = {
-  eyebrow: "RESTAURANTOS",
+  eyebrow: "restaurant-os",
   title: ["Every prep task.", "Every shift.", "Automated."],
   sub: "Replace WhatsApp chaos, paper lists, and Sunday planning sessions with one system that runs on your team's phones.",
   cta: "See how it works",
@@ -121,7 +121,7 @@ export const benefits = {
     { value: "5", unit: "min", label: "onboarding", sub: "New staff learn the system on their phone" },
     { value: "1", unit: "tap", label: "to reschedule", sub: "Manager approves from Telegram" },
     { value: "Auto", unit: "", label: "weekly planning", sub: "Every Monday, the week populates itself" },
-    { value: "$0", unit: "", label: "platform cost", sub: "Vercel + Supabase + n8n free tiers" },
+    { value: "Live", unit: "", label: "staff performance", sub: "Effective production time logged per person, per task — performance reviews stop being memory exercises" },
   ],
   narrative: [
     {

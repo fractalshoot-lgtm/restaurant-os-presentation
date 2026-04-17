@@ -1,9 +1,10 @@
 "use client";
 
 import { motion, type Variants } from "framer-motion";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { IphoneFrame } from "@/components/mockup/IphoneFrame";
 import { ZoomMarker } from "@/components/mockup/ZoomMarker";
+import { MockupModal } from "@/components/mockup/MockupModal";
 
 export type Zoom = {
   x: number;
@@ -23,11 +24,6 @@ type Props = {
   flip?: boolean;
 };
 
-/**
- * Render both mobile and desktop variants; CSS picks one per breakpoint.
- * Keeping them as separate components lets each version have its own pace
- * and composition without responsive hacks.
- */
 export function ModuleSlide(props: Props) {
   return (
     <>
@@ -42,7 +38,7 @@ export function ModuleSlide(props: Props) {
 }
 
 // ─────────────────────────────────────────────────────────────
-// Mobile — compact, stacked, no choreography
+// Mobile — stacked, with markers + tap to enlarge
 // ─────────────────────────────────────────────────────────────
 
 function ModuleSlideMobile({
@@ -51,10 +47,13 @@ function ModuleSlideMobile({
   headline,
   bullets,
   screen,
+  zooms,
 }: Props) {
+  const [open, setOpen] = useState(false);
+  const phoneWidth = 170;
+
   return (
     <section className="py-10 px-5">
-      {/* Text — simple fade-in */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -116,22 +115,67 @@ function ModuleSlideMobile({
         </ul>
       </motion.div>
 
-      {/* Phone — fixed pixel width so nothing leaks into neighbouring sections */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-        className="mt-6"
+        className="mt-8"
       >
-        <IphoneFrame width={160}>{screen}</IphoneFrame>
+        <div
+          className="relative mx-auto"
+          style={{ width: phoneWidth }}
+        >
+          <button
+            type="button"
+            onClick={() => setOpen(true)}
+            aria-label="Enlarge mockup"
+            className="cursor-zoom-in block"
+            style={{
+              border: "none",
+              background: "none",
+              padding: 0,
+              width: phoneWidth,
+            }}
+          >
+            <IphoneFrame width={phoneWidth}>{screen}</IphoneFrame>
+          </button>
+
+          {zooms.map((z, i) => (
+            <ZoomMarker
+              key={i}
+              {...z}
+              phoneWidth={phoneWidth}
+              delay={i * 0.18}
+            />
+          ))}
+
+          <div
+            className="absolute left-1/2 -translate-x-1/2 text-[11px] font-semibold"
+            style={{
+              bottom: -26,
+              color: "#22C55E",
+              letterSpacing: 0.3,
+            }}
+          >
+            Tap to enlarge ↗
+          </div>
+        </div>
       </motion.div>
+
+      <MockupModal
+        open={open}
+        onClose={() => setOpen(false)}
+        title={`0${index} · ${eyebrow}`}
+      >
+        {screen}
+      </MockupModal>
     </section>
   );
 }
 
 // ─────────────────────────────────────────────────────────────
-// Desktop — full choreography (text alone → transforms → phone → zooms)
+// Desktop — full choreography (text → transform → phone → zooms)
 // ─────────────────────────────────────────────────────────────
 
 const sectionVariants: Variants = { hidden: {}, visible: {} };
@@ -161,6 +205,9 @@ function ModuleSlideDesktop({
   zooms,
   flip,
 }: Props) {
+  const [open, setOpen] = useState(false);
+  const phoneWidth = 320;
+
   const phase1Offset = flip ? "-8%" : "8%";
 
   const textVisible = {
@@ -186,7 +233,6 @@ function ModuleSlideDesktop({
           flip ? "lg:[&>div:first-child]:order-2" : ""
         }`}
       >
-        {/* Text */}
         <motion.div
           variants={{ hidden: textHidden, visible: textVisible }}
           className="relative z-10"
@@ -244,22 +290,53 @@ function ModuleSlideDesktop({
           </ul>
         </motion.div>
 
-        {/* Phone + markers — markers self-trigger with stagger so the variant cascade is irrelevant */}
         <motion.div variants={phoneVariants} className="relative mx-auto">
-          <IphoneFrame
-            width={320}
-            overlay={
-              <>
-                {zooms.map((z, i) => (
-                  <ZoomMarker key={i} {...z} delay={i * 0.18} />
-                ))}
-              </>
-            }
-          >
-            {screen}
-          </IphoneFrame>
+          <div className="relative mx-auto" style={{ width: phoneWidth }}>
+            <button
+              type="button"
+              onClick={() => setOpen(true)}
+              aria-label="Enlarge mockup"
+              className="cursor-zoom-in block"
+              style={{
+                border: "none",
+                background: "none",
+                padding: 0,
+                width: phoneWidth,
+              }}
+            >
+              <IphoneFrame width={phoneWidth}>{screen}</IphoneFrame>
+            </button>
+
+            {zooms.map((z, i) => (
+              <ZoomMarker
+                key={i}
+                {...z}
+                phoneWidth={phoneWidth}
+                delay={i * 0.18}
+              />
+            ))}
+
+            <div
+              className="absolute left-1/2 -translate-x-1/2 text-xs font-semibold"
+              style={{
+                bottom: -32,
+                color: "#22C55E",
+                letterSpacing: 0.3,
+              }}
+            >
+              Click to enlarge ↗
+            </div>
+          </div>
         </motion.div>
       </motion.div>
+
+      <MockupModal
+        open={open}
+        onClose={() => setOpen(false)}
+        title={`0${index} · ${eyebrow}`}
+      >
+        {screen}
+      </MockupModal>
     </section>
   );
 }
