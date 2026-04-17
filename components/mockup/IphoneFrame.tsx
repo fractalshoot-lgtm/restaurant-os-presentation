@@ -5,31 +5,52 @@ import { ReactNode } from "react";
 
 type Props = {
   children: ReactNode;
+  /** Decorative children (e.g. ZoomMarkers) positioned absolutely in the scaled coord system. */
+  overlay?: ReactNode;
   tilt?: boolean;
+  /** Max display width in px. Frame scales down on narrower containers via container queries. */
+  maxWidth?: number;
   className?: string;
 } & MotionProps;
 
 /**
- * iPhone 16 Pro Max physical dimensions (scaled): 430 x 932 display, ~460 x 950 with bezel.
- * We render the frame as a div with real pixel-ish values, then scale with CSS transform on parent.
+ * iPhone 16 Pro Max — display 430x932, bezel ~460x950.
+ * Uses container queries to scale the whole frame to fit its parent,
+ * so the same component works from 320px to 460px+ without layout shift.
  */
-export function IphoneFrame({ children, tilt = false, className = "", ...motionProps }: Props) {
+export function IphoneFrame({
+  children,
+  overlay,
+  tilt = false,
+  maxWidth = 430,
+  className = "",
+  ...motionProps
+}: Props) {
   return (
     <motion.div
-      className={`relative mx-auto ${className}`}
+      className={`iphone-container mx-auto ${className}`}
       style={{
-        width: 430,
-        height: 932,
+        width: "100%",
+        maxWidth,
+        aspectRatio: "430 / 932",
+        position: "relative",
+        containerType: "inline-size",
         perspective: 1400,
       }}
       {...motionProps}
     >
+      {/* Scaled inner: fixed 430x932 coord system, transform maps it to container width */}
       <div
-        className="relative"
         style={{
-          width: "100%",
-          height: "100%",
-          transform: tilt ? "rotateY(-6deg) rotateX(4deg)" : undefined,
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: 430,
+          height: 932,
+          transformOrigin: "top left",
+          transform: tilt
+            ? "scale(calc(100cqw / 430)) rotateY(-5deg) rotateX(3deg)"
+            : "scale(calc(100cqw / 430))",
           transformStyle: "preserve-3d",
         }}
       >
@@ -54,9 +75,7 @@ export function IphoneFrame({ children, tilt = false, className = "", ...motionP
           {/* Screen */}
           <div
             className="absolute inset-[14px] rounded-[50px] overflow-hidden"
-            style={{
-              background: "#F8FAFC",
-            }}
+            style={{ background: "#F8FAFC" }}
           >
             {children}
             {/* Dynamic island */}
@@ -117,6 +136,9 @@ export function IphoneFrame({ children, tilt = false, className = "", ...motionP
             }}
           />
         </div>
+
+        {/* Overlay (e.g. zoom markers) — share the scaled coordinate system */}
+        {overlay}
       </div>
     </motion.div>
   );

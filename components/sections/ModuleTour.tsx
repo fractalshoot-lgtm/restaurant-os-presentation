@@ -74,7 +74,7 @@ export function ModuleTour() {
         background: "linear-gradient(180deg, #F8FAFC 0%, #FFFFFF 50%, #F8FAFC 100%)",
       }}
     >
-      <section className="py-28 md:py-36 px-6 md:px-10">
+      <section className="py-20 md:py-28 px-5 md:px-10">
         <div className="max-w-6xl mx-auto">
           <SectionTitle
             eyebrow="The app"

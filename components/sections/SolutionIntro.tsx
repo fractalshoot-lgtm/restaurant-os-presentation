@@ -9,7 +9,7 @@ export function SolutionIntro() {
 
   return (
     <section
-      className="py-28 md:py-40 px-6 md:px-10 relative overflow-hidden"
+      className="py-20 md:py-32 px-5 md:px-10 relative overflow-hidden"
       style={{ background: "#FFFFFF" }}
     >
       <div className="max-w-6xl mx-auto">
@@ -20,7 +20,7 @@ export function SolutionIntro() {
           center
         />
 
-        <div className="mt-20 md:mt-24 relative">
+        <div className="mt-14 md:mt-24 relative">
           {/* Connecting line (SVG) */}
           <svg
             className="absolute top-1/2 left-0 w-full h-1 -translate-y-1/2 hidden md:block pointer-events-none"
@@ -54,12 +54,12 @@ export function SolutionIntro() {
                 className="flex flex-col items-center text-center"
               >
                 <div
-                  className="w-20 h-20 rounded-2xl flex items-center justify-center mb-5"
+                  className="w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center mb-4 md:mb-5"
                   style={{
                     background: "#FFFFFF",
                     border: "1px solid #E2E8F0",
                     boxShadow: "0 12px 32px rgba(15,23,42,0.08)",
-                    fontSize: 32,
+                    fontSize: 26,
                   }}
                 >
                   {nodeIcons[i]}
@@ -83,7 +83,7 @@ export function SolutionIntro() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.6, delay: 0.7 }}
-          className="mt-20 text-center text-lg font-semibold"
+          className="mt-14 md:mt-20 text-center text-base md:text-lg font-semibold"
           style={{ color: "#0F172A" }}
         >
           Runs on any phone. <span style={{ color: "#22C55E" }}>No app store.</span>{" "}

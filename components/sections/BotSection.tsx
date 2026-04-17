@@ -8,12 +8,12 @@ import { SectionTitle } from "@/components/ui/SectionTitle";
 export function BotSection() {
   return (
     <section
-      className="py-28 md:py-40 px-6 md:px-10"
+      className="py-20 md:py-32 px-5 md:px-10"
       style={{
         background: "linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%)",
       }}
     >
-      <div className="max-w-6xl mx-auto grid lg:grid-cols-[0.95fr_1.05fr] gap-14 items-center">
+      <div className="max-w-6xl mx-auto grid lg:grid-cols-[0.95fr_1.05fr] gap-10 md:gap-14 items-center">
         {/* Chat mockup */}
         <div
           className="rounded-3xl overflow-hidden"
@@ -46,7 +46,7 @@ export function BotSection() {
             </div>
           </div>
 
-          <div className="p-5 space-y-3" style={{ minHeight: 520 }}>
+          <div className="p-4 md:p-5 space-y-3" style={{ minHeight: 480 }}>
             {botTranscript.map((m, i) => {
               const isUser = m.from === "user";
               const isAlert = m.from === "alert";

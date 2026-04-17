@@ -6,11 +6,11 @@ import { SectionTitle } from "@/components/ui/SectionTitle";
 
 export function Problem() {
   return (
-    <section id="problem" className="py-28 md:py-40 px-6 md:px-10">
+    <section id="problem" className="py-20 md:py-32 px-5 md:px-10">
       <div className="max-w-6xl mx-auto">
         <SectionTitle eyebrow="The problem" title={problem.title} sub={problem.intro} />
 
-        <div className="mt-16 md:mt-20 grid md:grid-cols-3 gap-6">
+        <div className="mt-12 md:mt-20 grid md:grid-cols-3 gap-5 md:gap-6">
           {problem.points.map((p, i) => (
             <motion.div
               key={p.title}
@@ -18,7 +18,7 @@ export function Problem() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.6, delay: i * 0.12, ease: [0.16, 1, 0.3, 1] }}
-              className="p-8 rounded-2xl border"
+              className="p-6 md:p-8 rounded-2xl border"
               style={{
                 background: "#FFFFFF",
                 borderColor: "#E2E8F0",

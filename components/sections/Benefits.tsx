@@ -8,7 +8,7 @@ import { Stat } from "@/components/ui/Stat";
 export function Benefits() {
   return (
     <section
-      className="py-28 md:py-40 px-6 md:px-10"
+      className="py-20 md:py-32 px-5 md:px-10"
       style={{ background: "#FFFFFF" }}
     >
       <div className="max-w-6xl mx-auto">
@@ -19,13 +19,13 @@ export function Benefits() {
           center
         />
 
-        <div className="mt-16 md:mt-20 grid grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+        <div className="mt-12 md:mt-20 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
           {benefits.stats.map((s, i) => (
             <Stat key={s.label} index={i} {...s} />
           ))}
         </div>
 
-        <div className="mt-20 md:mt-24 grid md:grid-cols-2 gap-6">
+        <div className="mt-14 md:mt-24 grid md:grid-cols-2 gap-5 md:gap-6">
           {benefits.narrative.map((n, i) => (
             <motion.div
               key={n.title}
@@ -33,7 +33,7 @@ export function Benefits() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.4 }}
               transition={{ duration: 0.6, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
-              className="p-8 rounded-2xl"
+              className="p-6 md:p-8 rounded-2xl"
               style={{ background: "#F8FAFC", border: "1px solid #E2E8F0" }}
             >
               <h4 className="text-xl font-bold mb-3" style={{ color: "#0F172A" }}>

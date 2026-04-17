@@ -25,7 +25,7 @@ export function ZoomMarker({ x, y, label, side = "right", delay = 0 }: Props) {
 
   return (
     <motion.div
-      className="absolute pointer-events-none"
+      className="absolute pointer-events-none hidden md:block"
       style={{ left: x, top: y, zIndex: 30 }}
       initial={{ opacity: 0, scale: 0.6 }}
       whileInView={{ opacity: 1, scale: 1 }}

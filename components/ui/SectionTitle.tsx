@@ -30,8 +30,13 @@ export function SectionTitle({ eyebrow, title, sub, center, light }: Props) {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.4 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-        className="text-4xl md:text-6xl font-bold tracking-tight"
-        style={{ color: light ? "#FFFFFF" : "#0F172A", lineHeight: 1.05 }}
+        className="font-bold tracking-tight"
+        style={{
+          color: light ? "#FFFFFF" : "#0F172A",
+          lineHeight: 1.08,
+          fontSize: "clamp(30px, 6vw, 60px)",
+          letterSpacing: "-0.5px",
+        }}
       >
         {title}
       </motion.h2>
@@ -41,7 +46,7 @@ export function SectionTitle({ eyebrow, title, sub, center, light }: Props) {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.4 }}
           transition={{ duration: 0.6, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-5 text-lg md:text-xl"
+          className="mt-4 md:mt-5 text-base md:text-xl"
           style={{ color: light ? "#94A3B8" : "#64748B", lineHeight: 1.5 }}
         >
           {sub}

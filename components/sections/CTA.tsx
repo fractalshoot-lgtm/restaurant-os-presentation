@@ -6,7 +6,7 @@ import { cta } from "@/lib/content";
 export function CTA() {
   return (
     <section
-      className="py-28 md:py-40 px-6 md:px-10 relative overflow-hidden"
+      className="py-20 md:py-32 px-5 md:px-10 relative overflow-hidden"
       style={{
         background:
           "linear-gradient(160deg, #1A0D2E 0%, #0A0A18 80%)",

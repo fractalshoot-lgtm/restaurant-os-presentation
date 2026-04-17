@@ -13,7 +13,7 @@ export function Hero() {
     offset: ["start start", "end start"],
   });
   const iphoneY = useTransform(scrollYProgress, [0, 1], [0, -80]);
-  const iphoneRotate = useTransform(scrollYProgress, [0, 1], [-6, -2]);
+  const iphoneRotate = useTransform(scrollYProgress, [0, 1], [-4, -1]);
   const iphoneOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.6]);
 
   return (
@@ -28,23 +28,23 @@ export function Hero() {
       {/* Ambient gradient blobs */}
       <div
         aria-hidden
-        className="absolute top-10 -left-40 w-[520px] h-[520px] rounded-full blur-[110px] opacity-40"
+        className="absolute top-10 -left-40 w-[320px] sm:w-[520px] h-[320px] sm:h-[520px] rounded-full blur-[110px] opacity-40"
         style={{ background: "radial-gradient(circle, #22C55E 0%, transparent 70%)" }}
       />
       <div
         aria-hidden
-        className="absolute -bottom-40 right-0 w-[600px] h-[600px] rounded-full blur-[120px] opacity-25"
+        className="absolute -bottom-40 right-0 w-[360px] sm:w-[600px] h-[360px] sm:h-[600px] rounded-full blur-[120px] opacity-25"
         style={{ background: "radial-gradient(circle, #7C3AED 0%, transparent 70%)" }}
       />
 
-      <div className="relative z-10 max-w-7xl w-full mx-auto px-6 md:px-10 py-20 grid lg:grid-cols-[1.1fr_0.9fr] gap-12 items-center">
+      <div className="relative z-10 max-w-7xl w-full mx-auto px-5 md:px-10 py-20 md:py-24 grid lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-12 items-center">
         {/* Copy */}
         <div>
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold tracking-[0.2em] uppercase"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-[10px] md:text-xs font-semibold tracking-[0.2em] uppercase"
             style={{
               background: "rgba(34,197,94,0.1)",
               borderColor: "rgba(34,197,94,0.3)",
@@ -56,12 +56,12 @@ export function Hero() {
           </motion.div>
 
           <h1
-            className="mt-8 font-bold tracking-tight"
+            className="mt-6 md:mt-8 font-bold tracking-tight"
             style={{
               color: "#FFFFFF",
-              fontSize: "clamp(44px, 7vw, 86px)",
+              fontSize: "clamp(38px, 8vw, 86px)",
               lineHeight: 1.02,
-              letterSpacing: -2,
+              letterSpacing: -1.5,
             }}
           >
             {hero.title.map((line, i) => (
@@ -82,7 +82,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.7, ease: "easeOut" }}
-            className="mt-8 text-lg md:text-xl max-w-xl"
+            className="mt-6 md:mt-8 text-base md:text-xl max-w-xl"
             style={{ color: "#94A3B8", lineHeight: 1.55 }}
           >
             {hero.sub}
@@ -92,11 +92,11 @@ export function Hero() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.9, ease: "easeOut" }}
-            className="mt-10 flex items-center gap-4"
+            className="mt-8 md:mt-10 flex flex-wrap items-center gap-4"
           >
             <a
               href="#problem"
-              className="inline-flex items-center gap-2 px-7 py-4 rounded-full font-semibold"
+              className="inline-flex items-center gap-2 px-6 md:px-7 py-3.5 md:py-4 rounded-full font-semibold text-sm md:text-base"
               style={{
                 background: "#22C55E",
                 color: "#0A0A18",
@@ -112,19 +112,17 @@ export function Hero() {
           </motion.div>
         </div>
 
-        {/* iPhone */}
+        {/* iPhone — responsive, hidden on very small, shown from sm up */}
         <motion.div
           style={{
             y: iphoneY,
             rotate: iphoneRotate,
             opacity: iphoneOpacity,
-            scale: 0.72,
-            transformOrigin: "center top",
           }}
           initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1.1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="hidden lg:block relative"
+          className="relative w-full max-w-[240px] sm:max-w-[280px] lg:max-w-[380px] mx-auto hidden sm:block"
         >
           <IphoneFrame tilt>
             <DashboardScreen />
@@ -137,7 +135,7 @@ export function Hero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1.4, duration: 0.6 }}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 text-xs font-semibold tracking-[0.2em] uppercase"
+        className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 text-xs font-semibold tracking-[0.2em] uppercase"
         style={{ color: "#64748B" }}
       >
         <motion.div
