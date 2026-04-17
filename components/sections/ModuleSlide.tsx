@@ -53,7 +53,7 @@ function ModuleSlideMobile({
   screen,
 }: Props) {
   return (
-    <section className="py-12 px-5">
+    <section className="py-10 px-5">
       {/* Text — simple fade-in */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -65,8 +65,8 @@ function ModuleSlideMobile({
           <div
             className="flex items-center justify-center rounded-full text-xs font-bold"
             style={{
-              width: 30,
-              height: 30,
+              width: 28,
+              height: 28,
               background: "#22C55E",
               color: "#FFFFFF",
             }}
@@ -85,7 +85,7 @@ function ModuleSlideMobile({
           className="font-bold tracking-tight"
           style={{
             color: "#0F172A",
-            fontSize: 28,
+            fontSize: 26,
             lineHeight: 1.12,
             letterSpacing: -0.5,
           }}
@@ -93,7 +93,7 @@ function ModuleSlideMobile({
           {headline}
         </h3>
 
-        <ul className="mt-5 space-y-3">
+        <ul className="mt-4 space-y-2.5">
           {bullets.map((b) => (
             <li key={b} className="flex gap-3">
               <span
@@ -106,7 +106,7 @@ function ModuleSlideMobile({
                 }}
               />
               <span
-                className="text-[15px]"
+                className="text-[14px]"
                 style={{ color: "#475569", lineHeight: 1.5 }}
               >
                 {b}
@@ -116,13 +116,13 @@ function ModuleSlideMobile({
         </ul>
       </motion.div>
 
-      {/* Phone — compact, below text */}
+      {/* Phone — small enough that the full mockup fits alongside the text inside one phone viewport */}
       <motion.div
-        initial={{ opacity: 0, y: 24 }}
+        initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.15 }}
+        viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-        className="mt-8 w-full max-w-[190px] mx-auto"
+        className="mt-6 w-full max-w-[150px] mx-auto"
       >
         <IphoneFrame>{screen}</IphoneFrame>
       </motion.div>
