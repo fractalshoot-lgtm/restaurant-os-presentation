@@ -1,137 +1,208 @@
 import { Screen } from "../Screen";
-import { todayTasks } from "@/lib/demo-data";
-import { AREA_ICONS } from "@/lib/tokens";
 import { BottomNav } from "./DashboardScreen";
 
-const T = {
-  bg: "#F8FAFC",
-  card: "#FFFFFF",
-  navy: "#0F172A",
-  accent: "#22C55E",
-  muted: "#64748B",
-  sub: "#94A3B8",
-  border: "#E2E8F0",
-  critical: "#EF4444",
+const AREA_ICONS: Record<string, string> = {
+  "Cold Prep": "❄️",
+  Desserts: "🍮",
+  Marinations: "🫙",
+  Orders: "📋",
+  Portions: "⚖️",
+  Proteins: "🍗",
+  Pulls: "🥩",
+  Salsas: "🌶️",
+  Soups: "🥣",
 };
 
 const PRIORITY_COLOR: Record<string, string> = {
-  Critical: "#EF4444",
-  Production: "#F0883E",
-  Extra: "#64748B",
+  Critical: "#ef4444",
+  Production: "#f0883e",
+  Extra: "#64748b",
 };
 
-export function TareasScreen() {
-  return (
-    <Screen>
-      <div style={{ padding: "8px 18px 12px" }}>
-        <div style={{ color: T.sub, fontSize: 12, letterSpacing: 1, fontWeight: 600 }}>
-          TODAY · APR 23
-        </div>
-        <div style={{ color: T.navy, fontSize: 26, fontWeight: 700, marginTop: 2 }}>Tasks</div>
-        <div style={{ display: "flex", gap: 6, marginTop: 10 }}>
-          {["All 12", "Done 6", "Pending 4", "Blocked 2"].map((t, i) => (
-            <div
-              key={i}
-              style={{
-                fontSize: 11,
-                fontWeight: 600,
-                padding: "5px 10px",
-                borderRadius: 999,
-                background: i === 0 ? T.navy : T.card,
-                color: i === 0 ? "#fff" : T.muted,
-                border: i === 0 ? "none" : `1px solid ${T.border}`,
-              }}
-            >
-              {t}
-            </div>
-          ))}
-        </div>
-      </div>
+type Task = {
+  id: string;
+  name: string;
+  area: keyof typeof AREA_ICONS;
+  time: number;
+  priority: "Critical" | "Production" | "Extra";
+  status: "pending" | "done" | "blocked";
+  by?: string;
+  qty?: string;
+  reason?: string;
+  reschedule?: string;
+};
 
-      <div style={{ padding: "0 14px", flex: 1, overflowY: "hidden" }}>
-        {todayTasks.map((t) => {
-          const isDone = t.status === "done";
-          const isBlocked = t.status === "blocked";
+const TASKS: Task[] = [
+  { id: "1", name: "Barbacoa Marinated", area: "Proteins", time: 60, priority: "Critical", status: "done", by: "Aniris", qty: "8 kg" },
+  { id: "2", name: "Pickled Onions", area: "Cold Prep", time: 30, priority: "Production", status: "done", by: "Chef", qty: "2 bins" },
+  { id: "3", name: "Salsa Macha Oil", area: "Salsas", time: 10, priority: "Critical", status: "pending" },
+  { id: "4", name: "Churros", area: "Desserts", time: 30, priority: "Extra", status: "pending" },
+  { id: "5", name: "Fish for taco Portions", area: "Portions", time: 45, priority: "Critical", status: "blocked", reason: "delayed supplier", reschedule: "Apr 24" },
+];
+
+export function TareasScreen() {
+  const total = TASKS.length;
+  const done = TASKS.filter((t) => t.status === "done").length;
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  const badgeBg = pct >= 80 ? "#DCFCE7" : pct >= 50 ? "#FEF9C3" : "#FEE2E2";
+  const badgeColor = pct >= 80 ? "#22c55e" : pct >= 50 ? "#f59e0b" : "#ef4444";
+  const barColor = badgeColor;
+
+  return (
+    <Screen topPad={52}>
+      {/* Header */}
+      <header
+        style={{
+          background: "#FFFFFF",
+          padding: "20px 16px 16px",
+          borderBottom: "1px solid #E2E8F0",
+        }}
+      >
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+          <div>
+            <h1 style={{ color: "#0F172A", margin: 0, fontSize: 22, fontWeight: 800 }}>Shift Tasks</h1>
+            <p style={{ color: "#64748B", fontSize: 13, margin: "2px 0 0" }}>Thursday, April 23</p>
+          </div>
+          <div
+            style={{
+              background: badgeBg,
+              borderRadius: 12,
+              padding: "6px 14px",
+              textAlign: "center",
+              minWidth: 56,
+            }}
+          >
+            <div style={{ fontSize: 22, fontWeight: 700, color: badgeColor }}>{pct}%</div>
+            <div style={{ fontSize: 11, color: "#94A3B8" }}>
+              {done}/{total}
+            </div>
+          </div>
+        </div>
+        <div
+          style={{
+            background: "#F1F5F9",
+            borderRadius: 10,
+            overflow: "hidden",
+            height: 6,
+            marginTop: 12,
+          }}
+        >
+          <div
+            style={{
+              height: "100%",
+              width: `${pct}%`,
+              background: barColor,
+              borderRadius: 10,
+            }}
+          />
+        </div>
+      </header>
+
+      {/* Task list */}
+      <main style={{ padding: "12px 14px", flex: 1 }}>
+        {TASKS.map((t) => {
+          const done = t.status === "done";
+          const blocked = t.status === "blocked";
+          const color = PRIORITY_COLOR[t.priority];
+          const icon = AREA_ICONS[t.area] ?? "🍽️";
+          const cardBg = done ? "#F0FDF4" : blocked ? "#FEF2F2" : "#FFFFFF";
+          const btnBg = done ? "#86EFAC" : blocked ? "#FCA5A5" : color;
+          const btnColor = done || blocked ? "#6B7280" : "#fff";
+
           return (
             <div
               key={t.id}
               style={{
-                background: T.card,
-                border: `1px solid ${T.border}`,
-                borderLeft: `3px solid ${PRIORITY_COLOR[t.priority]}`,
+                background: cardBg,
+                border: "1px solid #E2E8F0",
                 borderRadius: 14,
                 padding: "12px 14px",
-                marginBottom: 8,
-                opacity: isDone ? 0.7 : 1,
+                marginBottom: 10,
+                display: "flex",
+                alignItems: "flex-start",
+                gap: 10,
+                opacity: done || blocked ? 0.85 : 1,
                 boxShadow: "0 2px 10px rgba(0,0,0,0.03)",
               }}
             >
-              <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div
-                    style={{
-                      fontSize: 14,
-                      fontWeight: 600,
-                      color: T.navy,
-                      textDecoration: isDone ? "line-through" : "none",
-                    }}
-                  >
-                    {t.name}
-                  </div>
-                  <div style={{ fontSize: 11, color: T.muted, marginTop: 3 }}>
-                    {AREA_ICONS[t.area]} {t.area} · ⏱ {t.time} min
-                  </div>
-                  {isDone && (
-                    <div style={{ fontSize: 11, color: T.accent, marginTop: 5, fontWeight: 600 }}>
-                      ✓ {t.submitted_by} · 09:15 · 📸
-                    </div>
-                  )}
-                  {isBlocked && (
-                    <div
-                      style={{
-                        fontSize: 11,
-                        color: T.critical,
-                        marginTop: 5,
-                        fontWeight: 600,
-                      }}
-                    >
-                      🚫 Blocked · reschedule Apr 24
-                    </div>
-                  )}
+              {/* Left: priority badge + area icon */}
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 6,
+                  flexShrink: 0,
+                }}
+              >
+                <span
+                  style={{
+                    background: done ? "#22c55e" : color,
+                    color: "#fff",
+                    fontSize: 9,
+                    fontWeight: 700,
+                    textTransform: "uppercase",
+                    letterSpacing: 0.4,
+                    padding: "2px 7px",
+                    borderRadius: 20,
+                  }}
+                >
+                  {t.priority}
+                </span>
+                <span style={{ fontSize: 22, lineHeight: 1 }}>{icon}</span>
+              </div>
+
+              {/* Center */}
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div
+                  style={{
+                    color: "#0F172A",
+                    fontSize: 14,
+                    fontWeight: 600,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  {t.name}
                 </div>
-                {!isDone && !isBlocked && (
-                  <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
-                    <div
-                      style={{
-                        padding: "6px 12px",
-                        borderRadius: 8,
-                        background: T.accent,
-                        color: "#fff",
-                        fontSize: 12,
-                        fontWeight: 600,
-                      }}
-                    >
-                      ✓ Done
-                    </div>
-                    <div
-                      style={{
-                        padding: "6px 10px",
-                        borderRadius: 8,
-                        background: "#FEE2E2",
-                        color: T.critical,
-                        fontSize: 12,
-                        fontWeight: 600,
-                      }}
-                    >
-                      🚫
-                    </div>
+                <div style={{ color: "#64748B", fontSize: 12, marginTop: 2 }}>{t.area}</div>
+                <div style={{ color: "#94A3B8", fontSize: 11, marginTop: 2 }}>⏱ {t.time} min</div>
+                {done && t.by && (
+                  <div style={{ color: "#22c55e", fontSize: 11, marginTop: 4, fontWeight: 600 }}>
+                    ✓ {t.by}
+                    {t.qty ? ` · ${t.qty}` : ""}
                   </div>
                 )}
+                {blocked && (
+                  <div style={{ color: "#e74c3c", fontSize: 11, marginTop: 4, fontWeight: 600 }}>
+                    ✗ {t.reason} · 📅 {t.reschedule}
+                  </div>
+                )}
+              </div>
+
+              {/* Right action button */}
+              <div
+                style={{
+                  background: btnBg,
+                  color: btnColor,
+                  width: 48,
+                  height: 48,
+                  borderRadius: 12,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 22,
+                  fontWeight: 700,
+                  flexShrink: 0,
+                }}
+              >
+                {done ? "✓" : blocked ? "✗" : "→"}
               </div>
             </div>
           );
         })}
-      </div>
+      </main>
 
       <BottomNav active="tasks" />
     </Screen>

@@ -16,32 +16,31 @@ type SlideCfg = {
   zooms: Zoom[];
 };
 
-// Coords are in the 430x932 iPhone design space.
-// Screen content begins at y=70 (14 bezel inset + 56 status padding).
-// Calibrated from each screen component's pixel layout.
+// Coords in the 430x932 design space, calibrated against the rebuilt mockups
+// (topPad=52 content start y=66; see real RestaurantOS pages for inspiration).
 const SLIDES: Record<string, SlideCfg> = {
   dashboard: {
     screen: <DashboardScreen />,
     zooms: [
-      { x: 119, y: 230, label: "Live progress ring" },
-      { x: 215, y: 376, label: "Morning review" },
-      { x: 90, y: 482, label: "Area breakdown" },
+      { x: 215, y: 267, label: "Production Review card" },
+      { x: 300, y: 354, label: "Live progress ring" },
+      { x: 90, y: 531, label: "By area breakdown" },
     ],
   },
   tareas: {
     screen: <TareasScreen />,
     zooms: [
-      { x: 85, y: 148, label: "Status filter" },
-      { x: 165, y: 228, label: "Done with photo" },
-      { x: 140, y: 523, label: "Block + reschedule" },
+      { x: 365, y: 108, label: "Daily compliance %" },
+      { x: 370, y: 420, label: "Two-tap action" },
+      { x: 150, y: 630, label: "Block + reschedule" },
     ],
   },
   semana: {
     screen: <SemanaScreen />,
     zooms: [
-      { x: 215, y: 158, label: "Global search" },
-      { x: 130, y: 405, label: "Today highlighted" },
-      { x: 200, y: 655, label: "Rescheduled callouts" },
+      { x: 180, y: 168, label: "Search 198 tasks" },
+      { x: 80, y: 355, label: "Today card expanded" },
+      { x: 215, y: 235, label: "Week at a glance" },
     ],
   },
   produccion: {
@@ -55,16 +54,16 @@ const SLIDES: Record<string, SlideCfg> = {
   filtro: {
     screen: <FiltroScreen />,
     zooms: [
-      { x: 100, y: 138, label: "Compliance count" },
-      { x: 360, y: 184, label: "One-tap revert" },
-      { x: 170, y: 194, label: "Photo + staff + time" },
+      { x: 365, y: 98, label: "Completed count" },
+      { x: 365, y: 200, label: "One-tap revert" },
+      { x: 180, y: 195, label: "Staff + time log" },
     ],
   },
   workflows: {
     screen: <WorkflowsScreen />,
     zooms: [
-      { x: 215, y: 170, label: "Illustrated flows" },
-      { x: 215, y: 450, label: "Bot commands" },
+      { x: 215, y: 190, label: "Illustrated flows" },
+      { x: 215, y: 560, label: "Bot command reference" },
     ],
   },
 };
