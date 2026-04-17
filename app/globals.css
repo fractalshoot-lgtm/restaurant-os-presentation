@@ -45,19 +45,18 @@ body {
   outline-offset: 2px;
 }
 
-/* Disable pull-to-refresh, keep scroll snappy */
+/* Native scroll — keep smooth on browsers that honor it (respects prefers-reduced-motion) */
 html {
-  overscroll-behavior-y: none;
   scroll-behavior: smooth;
 }
 
-/* Ensure Lenis container behaves */
-html.lenis {
-  height: auto;
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
-html.lenis body {
-  overflow: hidden;
-}
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
+
+/* Hide the Hero's decorative gradient blobs from triggering horizontal scroll on narrow viewports */
+body {
+  overflow-x: hidden;
 }

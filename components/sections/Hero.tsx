@@ -1,24 +1,13 @@
 "use client";
 
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion";
 import { hero } from "@/lib/content";
 import { IphoneFrame } from "@/components/mockup/IphoneFrame";
 import { DashboardScreen } from "@/components/mockup/screens/DashboardScreen";
 
 export function Hero() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-  const iphoneY = useTransform(scrollYProgress, [0, 1], [0, -80]);
-  const iphoneRotate = useTransform(scrollYProgress, [0, 1], [-4, -1]);
-  const iphoneOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.6]);
-
   return (
     <section
-      ref={ref}
       className="relative min-h-screen overflow-hidden flex items-center"
       style={{
         background:
@@ -112,17 +101,12 @@ export function Hero() {
           </motion.div>
         </div>
 
-        {/* iPhone — responsive, hidden on very small, shown from sm up */}
+        {/* iPhone — always visible, scales via container queries */}
         <motion.div
-          style={{
-            y: iphoneY,
-            rotate: iphoneRotate,
-            opacity: iphoneOpacity,
-          }}
-          initial={{ opacity: 0, y: 60 }}
+          initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1.1, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="relative w-full max-w-[240px] sm:max-w-[280px] lg:max-w-[380px] mx-auto hidden sm:block"
+          transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="relative w-full max-w-[220px] sm:max-w-[260px] lg:max-w-[340px] mx-auto"
         >
           <IphoneFrame tilt>
             <DashboardScreen />
