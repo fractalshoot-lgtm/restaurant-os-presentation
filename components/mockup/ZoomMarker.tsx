@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, type Variants } from "framer-motion";
+import { motion } from "framer-motion";
 
 const FRAME_W = 430;
 const EXTERNAL_OFFSET = 24;
@@ -11,37 +11,14 @@ type Props = {
   y: number;
   label: string;
   side?: "left" | "right";
-  /** Additional delay on top of the parent's orchestrated stagger */
+  /** Base delay from the top of the section's reveal (seconds) */
   delay?: number;
 };
 
-// Variants are driven by the parent ModuleSlide's choreography. When the parent
-// transitions to "visible", each marker staggers in line-by-line.
-const markerVariants: Variants = {
-  hidden: { opacity: 0, scale: 0.6 },
-  visible: {
-    opacity: 1,
-    scale: 1,
-    transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
-  },
-};
-
-const lineVariants: Variants = {
-  hidden: { pathLength: 0 },
-  visible: {
-    pathLength: 1,
-    transition: { duration: 0.55, ease: "easeOut", delay: 0.15 },
-  },
-};
-
-const labelVariants: Variants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { duration: 0.35, delay: 0.35, ease: "easeOut" },
-  },
-};
-
+/**
+ * Self-triggered marker: fires its own whileInView once visible.
+ * Base delay is ~2.3s so markers arrive after the phone has settled in.
+ */
 export function ZoomMarker({ x, y, label, side, delay = 0 }: Props) {
   const isRight = (side ?? (x >= FRAME_W / 2 ? "right" : "left")) === "right";
 
@@ -53,20 +30,19 @@ export function ZoomMarker({ x, y, label, side, delay = 0 }: Props) {
   const labelLeft = isRight ? lineLength + 8 + LABEL_GAP : undefined;
   const labelRight = isRight ? undefined : lineLength + 8 + LABEL_GAP;
 
+  const baseDelay = 2.3 + delay;
+
   return (
     <motion.div
       className="absolute hidden md:block"
       style={{ left: x, top: y, zIndex: 30, pointerEvents: "none" }}
-      variants={{
-        hidden: markerVariants.hidden,
-        visible: {
-          ...(markerVariants.visible as object),
-          transition: {
-            duration: 0.55,
-            ease: [0.16, 1, 0.3, 1],
-            delay,
-          },
-        },
+      initial={{ opacity: 0, scale: 0.6 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{
+        duration: 0.55,
+        delay: baseDelay,
+        ease: [0.16, 1, 0.3, 1],
       }}
     >
       {/* Pulsing circle on target */}
@@ -115,7 +91,10 @@ export function ZoomMarker({ x, y, label, side, delay = 0 }: Props) {
           stroke="#22C55E"
           strokeWidth={1.5}
           strokeDasharray="4 3"
-          variants={lineVariants}
+          initial={{ pathLength: 0 }}
+          whileInView={{ pathLength: 1 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.55, delay: baseDelay + 0.15, ease: "easeOut" }}
         />
       </svg>
 
@@ -134,7 +113,10 @@ export function ZoomMarker({ x, y, label, side, delay = 0 }: Props) {
           letterSpacing: 0.2,
           boxShadow: "0 8px 24px rgba(15,23,42,0.18)",
         }}
-        variants={labelVariants}
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.35, delay: baseDelay + 0.35, ease: "easeOut" }}
       >
         {label}
       </motion.div>

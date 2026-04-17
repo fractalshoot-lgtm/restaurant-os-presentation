@@ -152,16 +152,6 @@ const phoneVariants: Variants = {
   },
 };
 
-const markersContainerVariants: Variants = {
-  hidden: {},
-  visible: {
-    transition: {
-      delayChildren: 2.3,
-      staggerChildren: 0.18,
-    },
-  },
-};
-
 function ModuleSlideDesktop({
   index,
   eyebrow,
@@ -254,20 +244,16 @@ function ModuleSlideDesktop({
           </ul>
         </motion.div>
 
-        {/* Phone + markers */}
+        {/* Phone + markers — markers self-trigger with stagger so the variant cascade is irrelevant */}
         <motion.div variants={phoneVariants} className="relative mx-auto">
           <IphoneFrame
             width={320}
             overlay={
-              <motion.div
-                variants={markersContainerVariants}
-                className="absolute inset-0"
-                style={{ pointerEvents: "none" }}
-              >
+              <>
                 {zooms.map((z, i) => (
-                  <ZoomMarker key={i} {...z} delay={i * 0.1} />
+                  <ZoomMarker key={i} {...z} delay={i * 0.18} />
                 ))}
-              </motion.div>
+              </>
             }
           >
             {screen}
