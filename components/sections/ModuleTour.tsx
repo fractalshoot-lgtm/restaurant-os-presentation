@@ -16,54 +16,55 @@ type SlideCfg = {
   zooms: Zoom[];
 };
 
-// Zoom markers auto-exit through the nearest frame edge (see ZoomMarker.tsx).
-// Labels always live in the margin outside the phone, never covering screen content.
+// Coords are in the 430x932 iPhone design space.
+// Screen content begins at y=70 (14 bezel inset + 56 status padding).
+// Calibrated from each screen component's pixel layout.
 const SLIDES: Record<string, SlideCfg> = {
   dashboard: {
     screen: <DashboardScreen />,
     zooms: [
-      { x: 120, y: 200, label: "Live progress ring" },
-      { x: 330, y: 370, label: "Morning review" },
-      { x: 80, y: 585, label: "Area breakdown" },
+      { x: 119, y: 230, label: "Live progress ring" },
+      { x: 215, y: 376, label: "Morning review" },
+      { x: 90, y: 482, label: "Area breakdown" },
     ],
   },
   tareas: {
     screen: <TareasScreen />,
     zooms: [
-      { x: 330, y: 245, label: "Status filter" },
-      { x: 340, y: 380, label: "Done with photo" },
-      { x: 340, y: 510, label: "Block + reschedule" },
+      { x: 85, y: 148, label: "Status filter" },
+      { x: 165, y: 228, label: "Done with photo" },
+      { x: 140, y: 523, label: "Block + reschedule" },
     ],
   },
   semana: {
     screen: <SemanaScreen />,
     zooms: [
-      { x: 80, y: 195, label: "Global search" },
-      { x: 330, y: 405, label: "Today highlighted" },
-      { x: 190, y: 800, label: "Rescheduled callouts" },
+      { x: 215, y: 158, label: "Global search" },
+      { x: 130, y: 405, label: "Today highlighted" },
+      { x: 200, y: 655, label: "Rescheduled callouts" },
     ],
   },
   produccion: {
     screen: <ProduccionScreen />,
     zooms: [
-      { x: 325, y: 270, label: "Yes / No toggle" },
-      { x: 70, y: 240, label: "Area grouping" },
-      { x: 220, y: 875, label: "One-tap submit" },
+      { x: 340, y: 170, label: "Yes / No toggle" },
+      { x: 70, y: 139, label: "Area grouping" },
+      { x: 215, y: 875, label: "One-tap submit" },
     ],
   },
   filtro: {
     screen: <FiltroScreen />,
     zooms: [
-      { x: 90, y: 200, label: "Compliance count" },
-      { x: 340, y: 340, label: "One-tap revert" },
-      { x: 180, y: 420, label: "Photo + staff + time" },
+      { x: 100, y: 138, label: "Compliance count" },
+      { x: 360, y: 184, label: "One-tap revert" },
+      { x: 170, y: 194, label: "Photo + staff + time" },
     ],
   },
   workflows: {
     screen: <WorkflowsScreen />,
     zooms: [
-      { x: 200, y: 270, label: "Illustrated flows" },
-      { x: 170, y: 700, label: "Bot commands" },
+      { x: 215, y: 170, label: "Illustrated flows" },
+      { x: 215, y: 450, label: "Bot commands" },
     ],
   },
 };
