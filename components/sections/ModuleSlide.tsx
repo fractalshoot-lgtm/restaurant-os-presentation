@@ -23,27 +23,120 @@ type Props = {
   flip?: boolean;
 };
 
-// Choreographed reveal (single timeline triggered on scroll into view):
-//   0.0 – 0.6s  Text fades in, large & slightly offset toward page center
-//   0.6 – 1.4s  (Text holds big, alone)
-//   1.4 – 2.2s  Text shrinks + settles into its column. Phone fades in on the opposite side
-//   2.2 – 3.3s  Zoom markers cascade in, one by one, on the phone
-// A tidy 3-act beat. User feels: read the headline → UI reveal → detail callouts.
+/**
+ * Render both mobile and desktop variants; CSS picks one per breakpoint.
+ * Keeping them as separate components lets each version have its own pace
+ * and composition without responsive hacks.
+ */
+export function ModuleSlide(props: Props) {
+  return (
+    <>
+      <div className="md:hidden">
+        <ModuleSlideMobile {...props} />
+      </div>
+      <div className="hidden md:block">
+        <ModuleSlideDesktop {...props} />
+      </div>
+    </>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Mobile — compact, stacked, no choreography
+// ─────────────────────────────────────────────────────────────
+
+function ModuleSlideMobile({
+  index,
+  eyebrow,
+  headline,
+  bullets,
+  screen,
+}: Props) {
+  return (
+    <section className="py-12 px-5">
+      {/* Text — simple fade-in */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <div className="flex items-center gap-3 mb-4">
+          <div
+            className="flex items-center justify-center rounded-full text-xs font-bold"
+            style={{
+              width: 30,
+              height: 30,
+              background: "#22C55E",
+              color: "#FFFFFF",
+            }}
+          >
+            0{index}
+          </div>
+          <div
+            className="text-[11px] font-semibold tracking-[0.2em] uppercase"
+            style={{ color: "#16A34A" }}
+          >
+            {eyebrow}
+          </div>
+        </div>
+
+        <h3
+          className="font-bold tracking-tight"
+          style={{
+            color: "#0F172A",
+            fontSize: 28,
+            lineHeight: 1.12,
+            letterSpacing: -0.5,
+          }}
+        >
+          {headline}
+        </h3>
+
+        <ul className="mt-5 space-y-3">
+          {bullets.map((b) => (
+            <li key={b} className="flex gap-3">
+              <span
+                className="flex-shrink-0 mt-[7px]"
+                style={{
+                  width: 5,
+                  height: 5,
+                  borderRadius: "50%",
+                  background: "#22C55E",
+                }}
+              />
+              <span
+                className="text-[15px]"
+                style={{ color: "#475569", lineHeight: 1.5 }}
+              >
+                {b}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </motion.div>
+
+      {/* Phone — compact, below text */}
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.15 }}
+        transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+        className="mt-8 w-full max-w-[190px] mx-auto"
+      >
+        <IphoneFrame>{screen}</IphoneFrame>
+      </motion.div>
+    </section>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────
+// Desktop — full choreography (text alone → transforms → phone → zooms)
+// ─────────────────────────────────────────────────────────────
+
 const sectionVariants: Variants = { hidden: {}, visible: {} };
 
-const textVariants: Variants = {
-  hidden: { opacity: 0, scale: 1.14, y: 28 },
-  visible: {
-    opacity: [0, 1, 1, 1, 1],
-    y: [28, 0, 0, 0, 0],
-    scale: [1.14, 1.14, 1.14, 1, 1],
-    transition: {
-      duration: 2.6,
-      times: [0, 0.2, 0.5, 0.82, 1],
-      ease: [0.16, 1, 0.3, 1],
-    },
-  },
-};
+const textHidden = { opacity: 0, scale: 1.14, y: 28 };
 
 const phoneVariants: Variants = {
   hidden: { opacity: 0, scale: 0.88, y: 40 },
@@ -69,7 +162,7 @@ const markersContainerVariants: Variants = {
   },
 };
 
-export function ModuleSlide({
+function ModuleSlideDesktop({
   index,
   eyebrow,
   headline,
@@ -78,11 +171,9 @@ export function ModuleSlide({
   zooms,
   flip,
 }: Props) {
-  // Subtle horizontal offset in phase 1 so the text feels more "centered on the page",
-  // not confined to its column. Reverses for flipped slides.
   const phase1Offset = flip ? "-8%" : "8%";
 
-  const textAnimate: Variants["visible"] = {
+  const textVisible = {
     opacity: [0, 1, 1, 1, 1],
     y: [28, 0, 0, 0, 0],
     x: [phase1Offset, phase1Offset, phase1Offset, "0%", "0%"],
@@ -95,22 +186,19 @@ export function ModuleSlide({
   };
 
   return (
-    <section className="py-14 md:py-24 px-5 md:px-10 overflow-x-hidden">
+    <section className="py-20 px-10 overflow-x-hidden">
       <motion.div
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, amount: 0.25 }}
         variants={sectionVariants}
-        className={`max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-20 items-center ${
+        className={`max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-20 items-center ${
           flip ? "lg:[&>div:first-child]:order-2" : ""
         }`}
       >
-        {/* Text block — phase 1 */}
+        {/* Text */}
         <motion.div
-          variants={{
-            hidden: textVariants.hidden,
-            visible: textAnimate,
-          }}
+          variants={{ hidden: textHidden, visible: textVisible }}
           className="relative z-10"
           style={{ transformOrigin: flip ? "right center" : "left center" }}
         >
@@ -138,7 +226,7 @@ export function ModuleSlide({
             className="font-bold tracking-tight"
             style={{
               color: "#0F172A",
-              fontSize: "clamp(28px, 4.5vw, 52px)",
+              fontSize: "clamp(36px, 4.5vw, 52px)",
               lineHeight: 1.08,
               letterSpacing: -1,
             }}
@@ -146,7 +234,7 @@ export function ModuleSlide({
             {headline}
           </h3>
 
-          <ul className="mt-6 md:mt-8 space-y-3.5 md:space-y-4">
+          <ul className="mt-8 space-y-4">
             {bullets.map((b) => (
               <li key={b} className="flex gap-3">
                 <span
@@ -158,10 +246,7 @@ export function ModuleSlide({
                     background: "#22C55E",
                   }}
                 />
-                <span
-                  className="text-base md:text-lg"
-                  style={{ color: "#475569", lineHeight: 1.55 }}
-                >
+                <span className="text-lg" style={{ color: "#475569", lineHeight: 1.55 }}>
                   {b}
                 </span>
               </li>
@@ -169,10 +254,10 @@ export function ModuleSlide({
           </ul>
         </motion.div>
 
-        {/* Phone block — phase 2 + 3 */}
+        {/* Phone + markers */}
         <motion.div
           variants={phoneVariants}
-          className="relative w-full max-w-[220px] sm:max-w-[260px] md:max-w-[280px] lg:max-w-[320px] mx-auto"
+          className="relative w-full max-w-[300px] lg:max-w-[340px] mx-auto"
         >
           <IphoneFrame
             overlay={
