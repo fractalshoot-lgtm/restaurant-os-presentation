@@ -32,6 +32,7 @@ export function IphoneFrame({
       style={{
         width: "100%",
         maxWidth,
+        maxHeight: "72vh",
         aspectRatio: "430 / 932",
         position: "relative",
         containerType: "inline-size",

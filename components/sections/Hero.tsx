@@ -106,7 +106,7 @@ export function Hero() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="relative w-full max-w-[220px] sm:max-w-[260px] lg:max-w-[340px] mx-auto"
+          className="relative w-full max-w-[200px] sm:max-w-[240px] lg:max-w-[340px] mx-auto"
         >
           <IphoneFrame tilt>
             <DashboardScreen />

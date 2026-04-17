@@ -172,7 +172,7 @@ export function ModuleSlide({
         {/* Phone block — phase 2 + 3 */}
         <motion.div
           variants={phoneVariants}
-          className="relative w-full max-w-[260px] sm:max-w-[280px] md:max-w-[300px] lg:max-w-[320px] mx-auto"
+          className="relative w-full max-w-[220px] sm:max-w-[260px] md:max-w-[280px] lg:max-w-[320px] mx-auto"
         >
           <IphoneFrame
             overlay={

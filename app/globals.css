@@ -56,7 +56,8 @@ html {
   }
 }
 
-/* Hide the Hero's decorative gradient blobs from triggering horizontal scroll on narrow viewports */
+/* Prevent the Hero's decorative gradient blobs from adding horizontal scroll
+ * without breaking iOS edge-swipe (back gesture). `clip` hides without creating a scroll container. */
 body {
-  overflow-x: hidden;
+  overflow-x: clip;
 }
