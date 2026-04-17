@@ -337,10 +337,6 @@ export function BottomNav({ active }: { active: "tasks" | "home" | "workflows" }
   return (
     <div
       style={{
-        position: "sticky",
-        bottom: 0,
-        left: 0,
-        right: 0,
         marginTop: "auto",
         background: "#0F172A",
         borderTop: "1px solid rgba(255,255,255,0.08)",
@@ -349,6 +345,7 @@ export function BottomNav({ active }: { active: "tasks" | "home" | "workflows" }
         height: 68,
         overflow: "visible",
         alignItems: "center",
+        flexShrink: 0,
       }}
     >
       {items.map((p) => {

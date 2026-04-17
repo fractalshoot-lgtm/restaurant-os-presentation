@@ -1,4 +1,5 @@
 import { Screen } from "../Screen";
+import { BottomNav } from "./DashboardScreen";
 
 const T = {
   card: "#FFFFFF",
@@ -112,6 +113,7 @@ export function FiltroScreen() {
           </div>
         ))}
       </div>
+      <BottomNav active="tasks" />
     </Screen>
   );
 }

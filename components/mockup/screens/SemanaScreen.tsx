@@ -1,5 +1,6 @@
 import { Screen } from "../Screen";
 import { Search } from "lucide-react";
+import { BottomNav } from "./DashboardScreen";
 
 const T = {
   card: "#FFFFFF",
@@ -188,6 +189,7 @@ export function SemanaScreen() {
           );
         })}
       </div>
+      <BottomNav active="home" />
     </Screen>
   );
 }
