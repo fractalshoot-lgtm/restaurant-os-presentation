@@ -116,15 +116,15 @@ function ModuleSlideMobile({
         </ul>
       </motion.div>
 
-      {/* Phone — small enough that the full mockup fits alongside the text inside one phone viewport */}
+      {/* Phone — fixed pixel width so nothing leaks into neighbouring sections */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-        className="mt-6 w-full max-w-[150px] mx-auto"
+        className="mt-6"
       >
-        <IphoneFrame>{screen}</IphoneFrame>
+        <IphoneFrame width={160}>{screen}</IphoneFrame>
       </motion.div>
     </section>
   );
@@ -255,11 +255,9 @@ function ModuleSlideDesktop({
         </motion.div>
 
         {/* Phone + markers */}
-        <motion.div
-          variants={phoneVariants}
-          className="relative w-full max-w-[300px] lg:max-w-[340px] mx-auto"
-        >
+        <motion.div variants={phoneVariants} className="relative mx-auto">
           <IphoneFrame
+            width={320}
             overlay={
               <motion.div
                 variants={markersContainerVariants}

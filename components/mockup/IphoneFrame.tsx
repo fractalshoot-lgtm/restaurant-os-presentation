@@ -3,55 +3,58 @@
 import { motion, type MotionProps } from "framer-motion";
 import { ReactNode } from "react";
 
+const FRAME_W = 430;
+const FRAME_H = 932;
+
 type Props = {
   children: ReactNode;
-  /** Decorative children (e.g. ZoomMarkers) positioned absolutely in the scaled coord system. */
+  /** Decorative children (e.g. ZoomMarkers) positioned absolutely in the 430x932 coord system. */
   overlay?: ReactNode;
   tilt?: boolean;
-  /** Max display width in px. Frame scales down on narrower containers via container queries. */
-  maxWidth?: number;
+  /** Rendered width in px. Height is derived from the 430/932 aspect. */
+  width?: number;
   className?: string;
 } & MotionProps;
 
 /**
- * iPhone 16 Pro Max — display 430x932, bezel ~460x950.
- * Uses container queries to scale the whole frame to fit its parent,
- * so the same component works from 320px to 460px+ without layout shift.
+ * iPhone 16 Pro Max (430x932). Renders at an explicit pixel width — parent
+ * passes the width per breakpoint. Internally we scale the 430x932 design via
+ * a single CSS transform and let the frame box inherit the final scaled size,
+ * so nothing leaks into adjacent sections.
  */
 export function IphoneFrame({
   children,
   overlay,
   tilt = false,
-  maxWidth = 430,
+  width = 320,
   className = "",
   ...motionProps
 }: Props) {
+  const scale = width / FRAME_W;
+  const height = FRAME_H * scale;
+
   return (
     <motion.div
-      className={`iphone-container mx-auto ${className}`}
+      className={`mx-auto ${className}`}
       style={{
-        width: "100%",
-        maxWidth,
-        maxHeight: "72vh",
-        aspectRatio: "430 / 932",
+        width,
+        height,
         position: "relative",
-        containerType: "inline-size",
         perspective: 1400,
       }}
       {...motionProps}
     >
-      {/* Scaled inner: fixed 430x932 coord system, transform maps it to container width */}
       <div
         style={{
           position: "absolute",
           top: 0,
           left: 0,
-          width: 430,
-          height: 932,
+          width: FRAME_W,
+          height: FRAME_H,
           transformOrigin: "top left",
           transform: tilt
-            ? "scale(calc(100cqw / 430)) rotateY(-5deg) rotateX(3deg)"
-            : "scale(calc(100cqw / 430))",
+            ? `scale(${scale}) rotateY(-5deg) rotateX(3deg)`
+            : `scale(${scale})`,
           transformStyle: "preserve-3d",
         }}
       >
@@ -138,7 +141,7 @@ export function IphoneFrame({
           />
         </div>
 
-        {/* Overlay (e.g. zoom markers) — share the scaled coordinate system */}
+        {/* Overlay shares the scaled coord system (zoom markers) */}
         {overlay}
       </div>
     </motion.div>

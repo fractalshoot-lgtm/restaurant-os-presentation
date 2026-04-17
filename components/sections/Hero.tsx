@@ -101,16 +101,23 @@ export function Hero() {
           </motion.div>
         </div>
 
-        {/* iPhone — always visible, scales via container queries */}
+        {/* iPhone — two fixed-size variants, CSS picks one per breakpoint */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          className="relative w-full max-w-[200px] sm:max-w-[240px] lg:max-w-[340px] mx-auto"
+          className="relative mx-auto"
         >
-          <IphoneFrame tilt>
-            <DashboardScreen />
-          </IphoneFrame>
+          <div className="lg:hidden">
+            <IphoneFrame width={190} tilt>
+              <DashboardScreen />
+            </IphoneFrame>
+          </div>
+          <div className="hidden lg:block">
+            <IphoneFrame width={340} tilt>
+              <DashboardScreen />
+            </IphoneFrame>
+          </div>
         </motion.div>
       </div>
 
