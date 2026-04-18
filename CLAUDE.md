@@ -100,8 +100,8 @@ Barra navy #0F172A con botón verde circular elevado 56×56 en el centro (border
 
 ## Estado actual
 
-- **Último commit con cambios visibles**: `3288c9e` docs: add CLAUDE.md with session handoff
-- **En curso (sin push — pendiente de revisión visual la próxima sesión)**: shape-based markers
+- **Último commit pusheado**: `9a09db3` feat(markers): shape-based zoom markers matching target card/button
+- **Vercel**: desplegado — https://restaurant-os-presentation.vercel.app
 - Mockups coinciden con la app real
 - BottomNav anclada correctamente al fondo, visible en 5 de 6 slides (Produccion tiene su propio Submit footer)
 - Zoom markers rediseñados: ahora adoptan la forma del target (no puntos)
@@ -124,7 +124,7 @@ Petición del usuario: **"en los zoom marks en lugar de que sea un circulo me gu
 
 Refactor de los markers para que en vez de un punto circular sobre el target, dibujen un **rectángulo redondeado calcando la forma de la tarjeta/botón real**.
 
-### Archivos modificados (sin commit al momento de guardar)
+### Archivos modificados (commit `9a09db3` — pusheado 2026-04-18)
 
 - `components/mockup/ZoomMarker.tsx` — desktop marker pasa de círculo a rect. Pulse ahora es `box-shadow` animada (no deforma el rect). Línea dashed sale del borde lateral.
 - `components/mockup/MockupModal.tsx` — halo del modal (mobile) también pasa a rect con mismo `w/h/radius`.
@@ -136,19 +136,19 @@ Refactor de los markers para que en vez de un punto circular sobre el target, di
 
 Dashboard marker #3 (By area) pasó de `(90, 531)` punto → `(14, 600, 402×176, r=20)` tarjeta completa.
 
-### Estado del commit
+### Verificación
 
-- Sin commit ni push aún: user quiere **revisar visualmente antes** en la próxima sesión.
 - `npx tsc --noEmit` pasa sin errores.
-- `tsconfig.tsbuildinfo` apareció untracked (artifact del type-check — ignorar o agregar a `.gitignore`).
+- Live en Vercel tras push.
+- `tsconfig.tsbuildinfo` untracked (artifact del type-check — agregar a `.gitignore` si molesta).
 
 ## Qué sigue en la próxima sesión
 
 ### Prioridad alta
-1. **Revisar los shape-based markers** — arrancar `npm run dev`, abrir cada slide (desktop + mobile modal):
+1. **Revisar los shape-based markers en producción** — abrir https://restaurant-os-presentation.vercel.app en desktop + mobile:
    - Verificar que el rect calca bien la tarjeta/botón en los 6 slides
-   - Ajustar `x, y, w, h, radius` donde no coincida
-   - Decidir si commit + push o iterar más
+   - Anotar qué marker está descalibrado (slide + número) con screenshot
+   - Ajustar `x, y, w, h, radius` en `components/sections/ModuleTour.tsx` — las coords están en design space 430×932
 2. **Verificar visualmente la coincidencia con la app real** — comparar contra screenshots reales, ajustar fuentes, padding, colores, posiciones.
 3. **Verificar en device real** — iPhone físico y Android — que todo se vea bien.
 
